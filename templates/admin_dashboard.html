@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - E-Commerce Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">Admin Portal</div>
+        <div class="nav-links">
+            <form id="dp-form" action="{{ url_for('upload_dp') }}" method="POST" enctype="multipart/form-data" class="dp-form" style="display: flex; align-items: center; background: transparent; padding: 0;">
+                <label for="dp-upload" class="dp-label" title="Change Profile Picture">
+                    <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}" alt="DP" class="profile-pic" onerror="this.src='https://ui-avatars.com/api/?name={{ session['username'] }}&background=random'">
+                    <span class="dp-hover-text">Edit</span>
+                </label>
+                <input type="file" id="dp-upload" name="dp" accept="image/*" onchange="document.getElementById('dp-form').submit();">
+            </form>
+            <a href="{{ url_for('profile') }}" class="welcome-text">{{ session.username }}</a>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages dashboard-flash">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+    </div>
+
+    <!-- Main Layout Grid -->
+    <main class="dashboard-main dashboard-layout">
+        
+        <!-- Sticky Left Sidebar -->
+        <aside class="sidebar-categories">
+            <h3 class="sidebar-title">Divisions</h3>
+            <div class="category-filters vertical-filters">
+                <a href="{{ url_for('admin_dashboard', category='All') }}" class="category-pill {% if current_category == 'All' %}active{% endif %}">All</a>
+                {% for cat in categories %}
+                <a href="{{ url_for('admin_dashboard', category=cat) }}" class="category-pill {% if current_category == cat %}active{% endif %}">{{ cat }}</a>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <!-- Admin Table Content -->
+        <section class="dashboard-content">
+            <div class="admin-container" style="margin: 0; width: 100%; max-width: none;">
+                <div class="header-section">
+                    <h2>{% if current_category == 'All' %}All Items{% else %}{{ current_category }} Items{% endif %} Inventory</h2>
+                    <button class="btn-primary" onclick="openModal('addModal')">+ Add Item / Division</button>
+                </div>
+
+        <table class="premium-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Division (Category)</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>MT-{{ "%03d"|format(loop.index) }}</td>
+                    <td>
+                        <img src="{{ item.image_url if item.image_url.startswith('http') else url_for('static', filename='uploads/' + item.image_url) }}" alt="..." width="50" height="50" style="object-fit:cover; border-radius: 8px;" onerror="this.onerror=null; this.src='https://placehold.co/50x50/e2e8f0/475569?text=IMG';">
+                    </td>
+                    <td>{{ item.name }}</td>
+                    <td><span class="category-badge">{{ item.category }}</span></td>
+                    <td>₹{{ "%.2f"|format(item.price) }}</td>
+                    <td>
+                        {% if item.stock < 5 %}
+                            <span style="color: #ff4b2b; font-weight: bold; margin: 0;">{{ item.stock }} (Low)</span>
+                        {% else %}
+                            <span style="color: #38ef7d; font-weight: bold; margin: 0;">{{ item.stock }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-edit" onclick="openEditModal({{ item.id }}, '{{ item.name|replace('\'', '\\\'') }}', '{{ item.description|replace('\'', '\\\'') }}', {{ item.price }}, '{{ item.image_url|replace('\'', '\\\'') }}', '{{ item.category|replace('\'', '\\\'') }}', {{ item.stock }})">Edit</button>
+                            <form action="{{ url_for('delete_item', item_id=item.id) }}" method="POST" style="display:inline; padding: 0; background: transparent; height: auto;">
+                                <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+            </div> <!-- End admin-container -->
+        </section> <!-- End dashboard-content -->
+    </main>
+
+    <!-- Add Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
+            <h2>Add New Item</h2>
+            <form action="{{ url_for('add_item') }}" method="POST" enctype="multipart/form-data" style="background: transparent; padding: 0; display: block; height: auto;">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" required rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" step="0.01" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" name="image_url">
+                </div>
+                <div class="form-group">
+                    <label>Or Upload Image</label>
+                    <input type="file" name="item_image" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Division (Category)</label>
+                    <input type="text" name="category" placeholder="Type new division or select existing" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" name="stock" value="10" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; font-size: 1.1em; padding: 12px; margin-top: 10px;">Save Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h2>Edit Item</h2>
+            <form id="editForm" method="POST" enctype="multipart/form-data" style="background: transparent; padding: 0; display: block; height: auto;">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" id="edit_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="edit_description" required rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" step="0.01" name="price" id="edit_price" required>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" name="image_url" id="edit_image_url">
+                </div>
+                <div class="form-group">
+                    <label>Or Upload Image</label>
+                    <input type="file" name="item_image" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Division (Category)</label>
+                    <input type="text" name="category" id="edit_category" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" name="stock" id="edit_stock" required>
+                </div>
+                <button type="submit" class="btn-edit" style="width: 100%; font-size: 1.1em; padding: 12px; margin-top: 10px;">Update Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = "block";
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+        function openEditModal(id, name, desc, price, img, cat, stock) {
+            document.getElementById('editForm').action = "/admin/item/edit/" + id;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_description').value = desc;
+            document.getElementById('edit_price').value = price;
+            document.getElementById('edit_image_url').value = img;
+            document.getElementById('edit_category').value = cat;
+            document.getElementById('edit_stock').value = stock;
+            openModal('editModal');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+
+        // Flash message closer
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.flash');
+            messages.forEach(msg => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 3000);
+    </script>
+</body>
+</html>

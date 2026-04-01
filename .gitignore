@@ -1,0 +1,23 @@
+# Flask
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database
+mart.db
+*.sqlite
+
+# Environment variables
+.env
+
+# Uploads
+static/uploads/*
+!static/uploads/.gitkeep

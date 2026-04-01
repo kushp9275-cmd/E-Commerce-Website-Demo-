@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="container" id="container">
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="form-container sign-up-container">
+            <form action="/register" method="POST">
+                <h2>Create Account</h2>
+                <div class="role-selector">
+                    <input type="radio" id="signup-user" name="role" value="User" checked>
+                    <label for="signup-user">User</label>
+                    <input type="radio" id="signup-admin" name="role" value="Admin">
+                    <label for="signup-admin">Admin</label>
+                </div>
+                <div class="social-container">
+                    <!-- Placeholder for social login -->
+                </div>
+                <span>or use your email for registration</span>
+                <input type="text" name="username" placeholder="Username" required />
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="tel" name="mobile_no" placeholder="Mobile Number" required />
+                <input type="text" name="address" placeholder="Shipping Address" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+
+        <div class="form-container sign-in-container">
+            <form action="/login" method="POST">
+                <h2>Sign in</h2>
+                <div class="role-selector">
+                    <input type="radio" id="signin-user" name="role" value="User" checked>
+                    <label for="signin-user">User Login</label>
+                    <input type="radio" id="signin-admin" name="role" value="Admin">
+                    <label for="signin-admin">Admin Login</label>
+                </div>
+                <div class="social-container">
+                    <!-- Placeholder for social login -->
+                </div>
+                <span>or use your account</span>
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h2>Welcome Back!</h2>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h2>Hello, Friend!</h2>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+
+        // Hide flash messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.flash');
+            messages.forEach(msg => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
