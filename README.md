@@ -46,7 +46,7 @@ A sophisticated, full-stack digital storefront featuring a modern glassmorphic d
    ```bash
    python app.py
    ```
-   The website will be available at `http://127.0.0.1:5000`.
+   The website will be live at `https://e-commerce-website-demo.onrender.com/`.
 
 ## 📜 Description
 This project is a state-of-the-art E-Commerce platform designed to provide a secure and aesthetically pleasing user experience. From the automated stock tracking to the seamless payment flow, every component is refined for reliability and speed.
