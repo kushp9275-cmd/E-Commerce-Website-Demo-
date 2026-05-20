@@ -12,6 +12,11 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = 'your_super_secret_key_here'
 
+# Automatically initialize database and tables on startup
+from setup_db import create_database_and_table
+db_path = os.path.join(app.root_path, 'mart.db')
+create_database_and_table(db_path)
+
 # Razorpay Configuration
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
