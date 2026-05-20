@@ -1,8 +1,7 @@
 import sqlite3
 import os
 
-def create_database_and_table():
-    db_path = 'mart.db'
+def create_database_and_table(db_path='mart.db'):
     
     # Connect to SQLite (creates the file if it doesn't exist)
     connection = sqlite3.connect(db_path)
