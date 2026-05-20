@@ -81,6 +81,23 @@ def create_database_and_table(db_path='mart.db'):
         cursor.executemany("INSERT INTO items (name, description, price, image_url, category, stock) VALUES (?, ?, ?, ?, ?, ?)", items_data)
         print("Seeded database with items.")
 
+    # Check for users
+    cursor.execute("SELECT COUNT(*) FROM users")
+    if cursor.fetchone()[0] == 0:
+        from werkzeug.security import generate_password_hash
+        user_hash = generate_password_hash("password123")
+        admin_hash = generate_password_hash("admin123")
+        
+        users_data = [
+            ('testuser', 'test@example.com', user_hash, '1234567890', '123 Test St', 'User'),
+            ('adminuser', 'patelkartavya79@gmail.com', admin_hash, '0987654321', '456 Admin St', 'Admin')
+        ]
+        cursor.executemany(
+            "INSERT INTO users (username, email, password_hash, mobile_no, address, role) VALUES (?, ?, ?, ?, ?, ?)",
+            users_data
+        )
+        print("Seeded database with default users.")
+
     connection.commit()
     connection.close()
     print(f"Database '{db_path}' and all required tables ensured.")
