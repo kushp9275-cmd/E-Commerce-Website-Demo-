@@ -96,7 +96,7 @@ button.ghost:hover {
     background: rgba(255,255,255,0.1);
 }
 
-form {
+.form-container form {
     background-color: #FFFFFF;
     display: flex;
     align-items: center;
@@ -1155,3 +1155,67 @@ table.premium-table .category-badge {
     background: rgba(0,0,0,0.4);
     box-shadow: 0 0 10px rgba(79, 172, 254, 0.3);
 }
+
+/* Payment Method Selector */
+.payment-method-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.payment-method-option {
+    cursor: pointer;
+    display: block;
+    width: 100%;
+}
+
+.payment-method-option input[type="radio"] {
+    display: none;
+}
+
+.method-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+}
+
+.payment-method-option:hover .method-card {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.payment-method-option input[type="radio"]:checked + .method-card {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.method-icon {
+    font-size: 24px;
+}
+
+.method-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.method-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 2px;
+}
+
+.method-desc {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
