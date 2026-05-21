@@ -5,6 +5,7 @@ import os
 from werkzeug.utils import secure_filename
 import razorpay
 from dotenv import load_dotenv
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -165,11 +166,56 @@ def profile():
     if not user_info:
         flash("User not found.", "error")
         return redirect(url_for('dashboard'))
-        
-    if not user_info['profile_pic']:
-        user_info['profile_pic'] = 'default_dp.png'
-        
-    return render_template('profile.html', user=user_info)
+
+    # Convert row to a mutable dict so we can modify fields
+    user_dict = dict(user_info)
+
+    if not user_dict['profile_pic']:
+        user_dict['profile_pic'] = 'default_dp.png'
+
+    # SQLite returns TIMESTAMP as a plain string — parse it into a datetime object
+    if user_dict.get('created_at'):
+        try:
+            user_dict['created_at'] = datetime.strptime(
+                user_dict['created_at'], '%Y-%m-%d %H:%M:%S'
+            )
+        except (ValueError, TypeError):
+            user_dict['created_at'] = None
+    # Fetch order history from DB
+    conn2 = get_db_connection()
+    cursor2 = conn2.cursor()
+    cursor2.execute("""
+        SELECT id, total_price, status, order_date, razorpay_order_id
+        FROM orders
+        WHERE user_id = ?
+        ORDER BY order_date DESC
+    """, (session['user_id'],))
+    raw_orders = cursor2.fetchall()
+    cursor2.close()
+    conn2.close()
+
+    orders = []
+    for o in raw_orders:
+        o_dict = dict(o)
+        if o_dict.get('order_date'):
+            try:
+                o_dict['order_date'] = datetime.strptime(o_dict['order_date'], '%Y-%m-%d %H:%M:%S')
+            except (ValueError, TypeError):
+                pass
+        orders.append(o_dict)
+
+    total_orders = len(orders)
+    total_spent  = sum(o['total_price'] for o in orders if o['status'] in ('paid', 'cod'))
+    paid_orders  = sum(1 for o in orders if o['status'] == 'paid')
+    cod_orders   = sum(1 for o in orders if o['status'] == 'cod')
+
+    return render_template('profile.html',
+                           user=user_dict,
+                           orders=orders,
+                           total_orders=total_orders,
+                           total_spent=total_spent,
+                           paid_orders=paid_orders,
+                           cod_orders=cod_orders)
 
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
@@ -309,31 +355,62 @@ def checkout():
                 conn.close()
                 return redirect(url_for('cart'))
 
-        # 1. Create Razorpay Order (Amount in paise: multiply by 100)
+        payment_method = request.form.get('payment_method', 'online')
+
+        # ── Cash on Delivery flow ────────────────────────────────────────────
+        if payment_method == 'cod':
+            try:
+                # 1. Record COD order
+                cursor.execute("""
+                    INSERT INTO orders (user_id, total_price, razorpay_order_id, status)
+                    VALUES (?, ?, NULL, 'cod')
+                """, (session['user_id'], total_price))
+
+                # 2. Decrement stock
+                for item in cart_items:
+                    cursor.execute(
+                        "UPDATE items SET stock = stock - ? WHERE id = ?",
+                        (item['quantity'], item['item_id'])
+                    )
+
+                # 3. Clear cart
+                cursor.execute("DELETE FROM cart WHERE user_id = ?", (session['user_id'],))
+
+                conn.commit()
+                cursor.close()
+                conn.close()
+
+                flash("Order placed successfully! Pay with cash on delivery. 🎉", "success")
+                return redirect(url_for('dashboard'))
+
+            except Exception as e:
+                conn.rollback()
+                cursor.close()
+                conn.close()
+                flash(f"Could not place COD order: {str(e)}", "error")
+                return redirect(url_for('cart'))
+
+        # ── Online (Razorpay) flow ───────────────────────────────────────────
         amount_paise = int(total_price * 100)
         data = {
             "amount": amount_paise,
             "currency": "INR",
             "receipt": f"receipt_{session['user_id']}",
-            "payment_capture": 1 # Auto-capture payment
+            "payment_capture": 1
         }
         
         try:
             razorpay_order = razorpay_client.order.create(data=data)
             razorpay_order_id = razorpay_order['id']
             
-            # 2. Record Pending Order in our DB
             cursor.execute("""
                 INSERT INTO orders (user_id, total_price, razorpay_order_id, status) 
                 VALUES (?, ?, ?, 'pending')
             """, (session['user_id'], total_price, razorpay_order_id))
             conn.commit()
-            
-            # 3. Clean up before sending to frontend
             cursor.close()
             conn.close()
             
-            # Pass data to verify on frontend via Razorpay modal
             return render_template('checkout_payment.html', 
                                  order_id=razorpay_order_id, 
                                  amount=amount_paise, 
