@@ -45,6 +45,28 @@
                         <h2>₹{{ "%.2f"|format(total_price) }}</h2>
                     </div>
                     <form action="{{ url_for('checkout') }}" method="POST">
+                        <div class="payment-method-selector">
+                            <label class="payment-method-option">
+                                <input type="radio" name="payment_method" value="online" checked>
+                                <span class="method-card">
+                                    <span class="method-icon">💳</span>
+                                    <span class="method-details">
+                                        <span class="method-title">Pay Online</span>
+                                        <span class="method-desc">Razorpay (UPI, Cards, NetBanking)</span>
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="payment-method-option">
+                                <input type="radio" name="payment_method" value="cod">
+                                <span class="method-card">
+                                    <span class="method-icon">💵</span>
+                                    <span class="method-details">
+                                        <span class="method-title">Cash on Delivery</span>
+                                        <span class="method-desc">Pay with cash upon delivery</span>
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
                         <button type="submit" class="checkout-btn">Proceed to Checkout</button>
                     </form>
                     <a href="{{ url_for('dashboard') }}" class="continue-shopping">Continue Shopping</a>
