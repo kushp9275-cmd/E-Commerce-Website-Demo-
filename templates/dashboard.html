@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - E-Commerce Website</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-brand">E-Commerce Website Dashboard</div>
         <div class="nav-links">
+            <!-- Search Bar -->
+            <form action="{{ url_for('dashboard') }}" method="GET" class="search-form">
+                {% if current_category and current_category != 'All' %}
+                <input type="hidden" name="category" value="{{ current_category }}">
+                {% endif %}
+                <div class="search-bar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" name="search" placeholder="Search products..." value="{{ search_query or '' }}" class="search-input">
+                </div>
+            </form>
+
             <form id="dp-form" action="{{ url_for('upload_dp') }}" method="POST" enctype="multipart/form-data" class="dp-form">
                 <label for="dp-upload" class="dp-label" title="Change Profile Picture">
                     <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}" alt="DP" class="profile-pic" onerror="this.src='https://ui-avatars.com/api/?name={{ session['username'] }}&background={{ 'random' }}';">
@@ -57,29 +68,63 @@
         
         <!-- Main Product Window -->
         <section class="dashboard-content">
-            <h2 class="section-title">{% if current_category == 'All' %}All Items{% else %}{{ current_category }} Items{% endif %}</h2>
+            <div class="content-header">
+                <h2 class="section-title">
+                    {% if search_query %}
+                        Search results for "{{ search_query }}"
+                    {% elif current_category == 'All' %}
+                        All Items
+                    {% else %}
+                        {{ current_category }} Items
+                    {% endif %}
+                </h2>
+                {% if search_query %}
+                <a href="{{ url_for('dashboard') }}" class="clear-search-btn">✕ Clear Search</a>
+                {% endif %}
+            </div>
             
+            {% if items|length == 0 %}
+            <div class="empty-state">
+                <h3>No products found</h3>
+                <p>{% if search_query %}Try a different search term.{% else %}No items in this category yet.{% endif %}</p>
+            </div>
+            {% endif %}
+
             <div class="product-grid">
                 {% for item in items %}
                 <div class="product-card">
                     <div class="product-img-wrapper">
                         <span class="category-badge">{{ item.category }}</span>
+                        {% if item.stock < 1 %}
+                        <span class="stock-badge stock-out">Out of Stock</span>
+                        {% elif item.stock < 5 %}
+                        <span class="stock-badge stock-low">Only {{ item.stock }} left</span>
+                        {% endif %}
                         <img src="{{ item.image_url if item.image_url.startswith('http') else url_for('static', filename='uploads/' + item.image_url) }}" alt="{{ item.name }}" class="product-img" onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e293b/6366f1?text=' + encodeURIComponent('{{ item.name }}');">
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">
-                            <span class="product-id">MT-{{ "%03d"|format(loop.index) }}</span>
+                            <span class="product-id">MT-{{ "%03d"|format(item.id) }}</span>
                             {{ item.name }}
                         </h3>
                         <p class="product-desc">{{ item.description }}</p>
                         <div class="product-footer">
                             <span class="product-price">₹{{ "%.2f"|format(item.price) }}</span>
+                            {% if item.stock > 0 %}
                             <form action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST" class="add-cart-form">
-                                <button type="submit" class="add-cart-btn">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                                    Add to Cart
-                                </button>
+                                <div class="qty-add-wrapper">
+                                    <input type="number" name="quantity" value="1" min="1" max="{{ item.stock }}" class="qty-input" title="Quantity">
+                                    <button type="submit" class="add-cart-btn">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                        Add
+                                    </button>
+                                </div>
                             </form>
+                            {% else %}
+                            <button class="add-cart-btn" disabled style="opacity:0.4; cursor: not-allowed;">
+                                Sold Out
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
