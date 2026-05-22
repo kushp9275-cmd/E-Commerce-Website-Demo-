@@ -1,7 +1,7 @@
 <nav class="glass p-2 rounded flex items-center justify-between">
     <div class="flex items-center">
         <a href="{{ url_for('dashboard') }}" class="text-2xl font-semibold" style="color: var(--primary-color);">
-            <img src="{{ url_for('static', filename='logo_placeholder_1779430781435.png') }}" alt="Logo" style="height: 40px; vertical-align: middle;" />
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" style="height: 40px; vertical-align: middle;" />
             <span class="ml-2">Mart</span>
         </a>
     </div>
@@ -9,7 +9,7 @@
         <a href="{{ url_for('dashboard') }}" class="nav-link" style="color: var(--text-light);">Home</a>
         <a href="{{ url_for('cart') }}" class="nav-link" style="color: var(--text-light);">Cart</a>
         <a href="{{ url_for('profile') }}" class="nav-link" style="color: var(--text-light);">Profile</a>
-        {% if session.get('is_admin') %}
+        {% if session.get('role') == 'Admin' %}
         <a href="{{ url_for('admin_dashboard') }}" class="nav-link" style="color: var(--text-light);">Admin</a>
         {% endif %}
     </div>
@@ -23,28 +23,7 @@
     <a href="{{ url_for('dashboard') }}" class="block mb-2" style="color: var(--text-light);">Home</a>
     <a href="{{ url_for('cart') }}" class="block mb-2" style="color: var(--text-light);">Cart</a>
     <a href="{{ url_for('profile') }}" class="block mb-2" style="color: var(--text-light);">Profile</a>
-    {% if session.get('is_admin') %}
+    {% if session.get('role') == 'Admin' %}
     <a href="{{ url_for('admin_dashboard') }}" class="block mb-2" style="color: var(--text-light);">Admin</a>
     {% endif %}
 </div>
-<script>
-    const toggle = document.getElementById('theme-toggle');
-    const mobileToggle = document.getElementById('mobile-menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    toggle.addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-theme');
-        const newTheme = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        toggle.textContent = newTheme === 'dark' ? '🌞' : '🌙';
-    });
-    mobileToggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
-    // Initialize theme from localStorage
-    const stored = localStorage.getItem('theme');
-    if (stored) {
-        document.documentElement.setAttribute('data-theme', stored);
-        toggle.textContent = stored === 'dark' ? '🌞' : '🌙';
-    }
-</script>
