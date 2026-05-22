@@ -2,6 +2,7 @@
 :root {
   /* Color palette */
   --color-primary: hsl(250, 70%, 55%); /* Indigo */
+--primary-color: var(--color-primary);
   --color-secondary: hsl(280, 65%, 60%); /* Purple */
   --color-bg-light: hsl(0, 0%, 98%);
   --color-bg-dark: hsl(230, 15%, 10%);
