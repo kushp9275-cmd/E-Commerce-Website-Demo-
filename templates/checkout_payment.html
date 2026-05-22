@@ -2,28 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Processing Payment...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment | Mart</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      // Apply stored theme before first paint to avoid flash
+      (function(){
+        var t = localStorage.getItem('theme');
+        if(t) document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
-<body style="background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2)); display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: 'Inter', sans-serif;">
+<body style="background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--text); font-family: var(--font); margin: 0; padding: 1.5rem; box-sizing: border-box;">
 
-    <div id="payment-container" style="text-align: center; background: var(--glass-bg); padding: 40px 50px; border-radius: 20px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); max-width: 400px;">
-        <div class="loader" style="border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-        <h2 style="margin-bottom: 10px;">Initializing Secure Payment</h2>
-        <p style="margin: 10px 0;">Please do not refresh this page...</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin: 5px 0 25px;">Amount to pay: ₹{{ "%.2f"|format(total_price) }}</p>
+    <div id="payment-container" style="text-align: center; background: var(--surface); padding: 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); backdrop-filter: var(--blur); box-shadow: var(--shadow-lg); max-width: 400px; width: 100%; box-sizing: border-box; transition: var(--transition);">
+        
+        <!-- Store Logo -->
+        <div style="margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center;">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Mart Logo" style="height: 48px; max-width: 100%; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));">
+        </div>
+        
+        <div class="loader" style="border: 4px solid var(--border); border-left-color: var(--primary); border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite; margin: 0 auto 1.5rem;"></div>
+        
+        <h2 style="margin: 0 0 0.5rem; font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Initializing Secure Payment</h2>
+        <p style="margin: 0.5rem 0; color: var(--text); font-size: 0.95rem;">Please do not refresh or close this window.</p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0.5rem 0 2rem;">Amount to pay: <span style="font-weight: 700; color: var(--text);">₹{{ "%.2f"|format(total_price) }}</span></p>
         
         <!-- Fallback buttons (hidden initially, shown if Razorpay fails) -->
-        <div id="payment-fallback" style="display: none;">
-            <p style="color: #ff6b6b; margin-bottom: 20px;">⚠️ Payment gateway could not be loaded.</p>
-            <a href="/cart" style="display: inline-block; padding: 12px 30px; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); color: white; border-radius: 20px; text-decoration: none; font-weight: 600;">Return to Cart</a>
+        <div id="payment-fallback" style="display: none; animation: fadeIn 0.4s ease;">
+            <p style="color: var(--danger); margin-bottom: 1.5rem; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>⚠️</span> Payment gateway could not be loaded.
+            </p>
+            <a href="/cart" class="btn-primary" style="display: block; width: 100%; padding: 0.8rem 1.5rem; text-decoration: none; box-sizing: border-box; text-align: center;">Return to Cart</a>
         </div>
 
         <!-- Cancel button always visible -->
-        <div style="margin-top: 20px;">
-            <a href="/cart" style="color: #94a3b8; font-size: 13px; text-decoration: underline;">Cancel and return to cart</a>
+        <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <a href="/cart" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">Cancel and return to cart</a>
         </div>
     </div>
 
@@ -41,9 +58,9 @@
                 "key": "{{ key_id }}",
                 "amount": "{{ amount }}", 
                 "currency": "INR",
-                "name": "E-Commerce Website",
-                "description": "Payment for your order",
-                "image": "https://placehold.co/200x200/6366f1/ffffff?text=Shop",
+                "name": "Mart",
+                "description": "Payment for Order #{{ internal_order_id }}",
+                "image": "/static/images/logo.png",
                 "order_id": "{{ order_id }}",
                 "handler": function (response){
                     document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
@@ -53,7 +70,7 @@
                 },
                 "prefill": {
                     "name": "{{ session.username }}",
-                    "email": ""
+                    "email": "{{ session.email or '' }}"
                 },
                 "theme": {
                     "color": "#6366f1"
@@ -92,6 +109,10 @@
     <style>
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </body>
