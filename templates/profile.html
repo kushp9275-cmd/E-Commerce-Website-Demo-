@@ -3,32 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if session.get('role') == 'Admin' %}Admin Profile{% else %}Profile{% endif %} - E-Commerce Website</title>
+    <title>{% if session.get('role') == 'Admin' %}Admin Profile{% else %}Profile{% endif %} - Mart</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-brand"><a href="{% if session.get('role') == 'Admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('dashboard') }}{% endif %}" style="color: inherit; text-decoration: none;">{% if session.get('role') == 'Admin' %}Admin Portal{% else %}E-Commerce Website Dashboard{% endif %}</a></div>
+        <div class="nav-brand">
+            <a href="{% if session.get('role') == 'Admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('dashboard') }}{% endif %}" style="color: inherit; text-decoration: none;">
+                {% if session.get('role') == 'Admin' %}Admin Portal{% else %}Mart Dashboard{% endif %}
+            </a>
+        </div>
         <div class="nav-links">
-            <a href="{% if session.get('role') == 'Admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('dashboard') }}{% endif %}" class="logout-btn" style="border-color: var(--primary-color);">Back to Dashboard</a>
+            <a href="{% if session.get('role') == 'Admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('dashboard') }}{% endif %}" class="logout-btn" style="border-color: var(--primary);">← Back to Store</a>
             <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         </div>
     </nav>
     
+    <!-- Flash Messages -->
+    <div class="flash-messages dashboard-flash">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+    </div>
+
     <main class="dashboard-main">
         <div class="profile-container">
-            <h2 class="section-title">{% if session.get('role') == 'Admin' %}Admin Profile{% else %}User Profile{% endif %}</h2>
-            <div class="profile-card">
+            <h2 class="section-title">{% if session.get('role') == 'Admin' %}Admin Profile{% else %}Account Settings{% endif %}</h2>
+            
+            <div class="profile-card" style="margin-top: 1.25rem;">
                 <div class="profile-header">
                     <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="DP" class="profile-large-pic" onerror="this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=random&size=150'">
-                    <h3>{{ user.username }}</h3>
-                    <p>Member since {{ user.created_at.strftime('%B %Y') if user.created_at else 'Unknown' }}</p>
+                    <div class="profile-name-area">
+                        <h3>{{ user.username }}</h3>
+                        <p>Member since {{ user.created_at.strftime('%B %Y') if user.created_at else 'Unknown' }}</p>
+                    </div>
                 </div>
+
+                <!-- Display profile details -->
                 <div class="profile-details" id="display-details">
                     <div class="detail-row">
-                        <span class="detail-label">Email</span>
+                        <span class="detail-label">Email Address</span>
                         <span class="detail-value">{{ user.email }}</span>
                     </div>
                     <div class="detail-row">
@@ -40,13 +60,14 @@
                         <span class="detail-value">{{ user.address or 'Not provided' }}</span>
                     </div>
                     
-                    <button class="logout-btn" onclick="toggleEdit()" style="margin-top: 15px; align-self: center; border-color: var(--primary-color);">Edit Profile</button>
+                    <button class="logout-btn" onclick="toggleEdit()" style="margin-top: 1.5rem; align-self: flex-start; border-color: var(--primary); color: var(--primary) !important;">Edit Profile Details</button>
                 </div>
 
+                <!-- Edit profile details form -->
                 <form class="profile-details" id="edit-details" action="{{ url_for('update_profile') }}" method="POST" style="display: none;">
                     <div class="detail-row">
-                        <span class="detail-label">Email</span>
-                        <span class="detail-value" style="font-size: 13px; color: #aaa;">{{ user.email }} (Locked)</span>
+                        <span class="detail-label">Email Address</span>
+                        <span class="detail-value" style="color: var(--text-muted);">{{ user.email }} (Locked)</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Username</span>
@@ -61,12 +82,93 @@
                         <input type="text" name="address" class="profile-edit-input" value="{{ user.address or '' }}" required>
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
-                        <button type="button" class="logout-btn" onclick="toggleEdit()" style="border-color: #ff4757;">Cancel</button>
-                        <button type="submit" class="logout-btn" style="border-color: var(--primary-color);">Save Changes</button>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1.5rem; width: 100%;">
+                        <button type="button" class="logout-btn" onclick="toggleEdit()" style="border-color: var(--danger); color: var(--danger) !important;">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Changes</button>
                     </div>
                 </form>
             </div>
+
+            <!-- Stats dashboard -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value">{{ total_orders }}</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">₹{{ "%.2f"|format(total_spent) }}</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-value">{{ paid_orders }}</div>
+                    <div class="stat-label">Paid Online</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-value">{{ cod_orders }}</div>
+                    <div class="stat-label">COD Orders</div>
+                </div>
+            </div>
+
+            <!-- Order History List -->
+            <div class="admin-section" style="margin-top: 2rem;">
+                <div class="admin-section-header">
+                    <h2>Your Order History</h2>
+                </div>
+                <div style="padding: 1.5rem;">
+                    {% if orders %}
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            {% for order in orders %}
+                                <div class="order-card" style="margin: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; justify-content: flex-start;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                                        <div>
+                                            <span style="font-weight: 700; color: var(--primary); font-size: 0.95rem;">#ORD-{{ "%05d"|format(order.id) }}</span>
+                                            <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">
+                                                {{ order.order_date.strftime('%d %b %Y, %H:%M') if order.order_date else 'N/A' }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span class="order-status status-{{ order.status }}">
+                                                {{ order.status.replace('_', ' ') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Order items brief -->
+                                    <div style="font-size: 0.85rem; color: var(--text-muted); padding: 0.5rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+                                        {% for item in order['items'] %}
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                                <span>{{ item.item_name }} <strong style="color: var(--text);">× {{ item.quantity }}</strong></span>
+                                                <span>₹{{ "%.2f"|format(item.subtotal) }}</span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                            Payment: <span style="font-weight: 600; text-transform: uppercase;">{{ order.payment_method }}</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <span style="font-weight: 800; font-size: 1.1rem; color: var(--primary);">₹{{ "%.2f"|format(order.total_price) }}</span>
+                                            <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn-edit" style="text-decoration: none; padding: 0.35rem 0.9rem;">Track Order</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                            <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">📦</p>
+                            <p>You haven't placed any orders yet.</p>
+                            <a href="{{ url_for('dashboard') }}" class="btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none; font-size: 0.85rem;">Shop Now</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -82,6 +184,15 @@
                 editDiv.style.display = 'flex';
             }
         }
+
+        // Flash message closer
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.flash');
+            messages.forEach(msg => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 3000);
     </script>
 </body>
 </html>
