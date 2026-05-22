@@ -21,11 +21,15 @@ create_database_and_table(db_path)
 # Razorpay Configuration
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
-razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+try:
+    razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+except Exception:
+    razorpay_client = None
+    print("WARNING: Razorpay client could not be initialized. Online payments disabled.")
 
 # File upload setup
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 # 2MB limit
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB limit
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -38,6 +42,10 @@ def get_db_connection():
     except sqlite3.Error as err:
         print(f"Error: {err}")
         return None
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AUTH ROUTES
+# ─────────────────────────────────────────────────────────────────────────────
 
 @app.route('/')
 def home():
@@ -116,6 +124,15 @@ def register():
 
     return redirect(url_for('home'))
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DASHBOARD & SEARCH
+# ─────────────────────────────────────────────────────────────────────────────
+
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
@@ -131,8 +148,16 @@ def dashboard():
     profile_pic = user_data['profile_pic'] if user_data else 'default_dp.png'
     
     category = request.args.get('category')
+    search_query = request.args.get('search', '').strip()
     
-    if category and category != 'All':
+    if search_query:
+        if category and category != 'All':
+            cursor.execute("SELECT * FROM items WHERE category = ? AND (name LIKE ? OR description LIKE ?)", 
+                         (category, f'%{search_query}%', f'%{search_query}%'))
+        else:
+            cursor.execute("SELECT * FROM items WHERE name LIKE ? OR description LIKE ?", 
+                         (f'%{search_query}%', f'%{search_query}%'))
+    elif category and category != 'All':
         cursor.execute("SELECT * FROM items WHERE category = ?", (category,))
     else:
         cursor.execute("SELECT * FROM items")
@@ -149,7 +174,13 @@ def dashboard():
     cursor.close()
     conn.close()
     
-    return render_template('dashboard.html', items=items, cart_count=cart_count, categories=categories, current_category=category or 'All', profile_pic=profile_pic)
+    return render_template('dashboard.html', items=items, cart_count=cart_count, 
+                         categories=categories, current_category=category or 'All', 
+                         profile_pic=profile_pic, search_query=search_query)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PROFILE & USER SETTINGS
+# ─────────────────────────────────────────────────────────────────────────────
 
 @app.route('/profile')
 def profile():
@@ -160,11 +191,11 @@ def profile():
     cursor = conn.cursor()
     cursor.execute("SELECT username, email, mobile_no, address, profile_pic, created_at FROM users WHERE id = ?", (session['user_id'],))
     user_info = cursor.fetchone()
-    cursor.close()
-    conn.close()
     
     if not user_info:
         flash("User not found.", "error")
+        cursor.close()
+        conn.close()
         return redirect(url_for('dashboard'))
 
     # Convert row to a mutable dict so we can modify fields
@@ -181,18 +212,15 @@ def profile():
             )
         except (ValueError, TypeError):
             user_dict['created_at'] = None
-    # Fetch order history from DB
-    conn2 = get_db_connection()
-    cursor2 = conn2.cursor()
-    cursor2.execute("""
-        SELECT id, total_price, status, order_date, razorpay_order_id
+
+    # Fetch order history with items
+    cursor.execute("""
+        SELECT id, total_price, status, order_date, razorpay_order_id, payment_method
         FROM orders
         WHERE user_id = ?
         ORDER BY order_date DESC
     """, (session['user_id'],))
-    raw_orders = cursor2.fetchall()
-    cursor2.close()
-    conn2.close()
+    raw_orders = cursor.fetchall()
 
     orders = []
     for o in raw_orders:
@@ -202,12 +230,24 @@ def profile():
                 o_dict['order_date'] = datetime.strptime(o_dict['order_date'], '%Y-%m-%d %H:%M:%S')
             except (ValueError, TypeError):
                 pass
+        
+        # Fetch items for this order
+        cursor.execute("""
+            SELECT oi.item_name, oi.quantity, oi.price_at_time, oi.image_url,
+                   (oi.quantity * oi.price_at_time) as subtotal
+            FROM order_items oi
+            WHERE oi.order_id = ?
+        """, (o_dict['id'],))
+        o_dict['items'] = [dict(item) for item in cursor.fetchall()]
         orders.append(o_dict)
 
+    cursor.close()
+    conn.close()
+
     total_orders = len(orders)
-    total_spent  = sum(o['total_price'] for o in orders if o['status'] in ('paid', 'cod'))
-    paid_orders  = sum(1 for o in orders if o['status'] == 'paid')
-    cod_orders   = sum(1 for o in orders if o['status'] == 'cod')
+    total_spent  = sum(o['total_price'] for o in orders if o['status'] not in ('pending', 'cancelled'))
+    paid_orders  = sum(1 for o in orders if o.get('payment_method') == 'online' and o['status'] != 'pending')
+    cod_orders   = sum(1 for o in orders if o.get('payment_method') == 'cod')
 
     return render_template('profile.html',
                            user=user_dict,
@@ -278,22 +318,46 @@ def upload_dp():
         
     return redirect(redirect_target)
 
+# ─────────────────────────────────────────────────────────────────────────────
+# CART MANAGEMENT
+# ─────────────────────────────────────────────────────────────────────────────
+
 @app.route('/add_to_cart/<int:item_id>', methods=['POST'])
 def add_to_cart(item_id):
     if 'user_id' not in session:
         return redirect(url_for('home'))
+
+    quantity = int(request.form.get('quantity', 1))
+    if quantity < 1:
+        quantity = 1
         
     conn = get_db_connection()
     cursor = conn.cursor()
+    
+    # Check stock
+    cursor.execute("SELECT stock FROM items WHERE id = ?", (item_id,))
+    item = cursor.fetchone()
+    if not item or item['stock'] < 1:
+        flash("Item is out of stock!", "error")
+        cursor.close()
+        conn.close()
+        return redirect(url_for('dashboard'))
     
     # Check if item exists in cart already
     cursor.execute("SELECT * FROM cart WHERE user_id = ? AND item_id = ?", (session['user_id'], item_id))
     existing_entry = cursor.fetchone()
     
     if existing_entry:
-        cursor.execute("UPDATE cart SET quantity = quantity + 1 WHERE id = ?", (existing_entry['id'],))
+        new_qty = existing_entry['quantity'] + quantity
+        if new_qty > item['stock']:
+            new_qty = item['stock']
+            flash(f"Quantity adjusted to available stock ({item['stock']}).", "error")
+        cursor.execute("UPDATE cart SET quantity = ? WHERE id = ?", (new_qty, existing_entry['id']))
     else:
-        cursor.execute("INSERT INTO cart (user_id, item_id, quantity) VALUES (?, ?, 1)", (session['user_id'], item_id))
+        if quantity > item['stock']:
+            quantity = item['stock']
+            flash(f"Quantity adjusted to available stock ({item['stock']}).", "error")
+        cursor.execute("INSERT INTO cart (user_id, item_id, quantity) VALUES (?, ?, ?)", (session['user_id'], item_id, quantity))
         
     conn.commit()
     cursor.close()
@@ -301,6 +365,60 @@ def add_to_cart(item_id):
     
     flash("Item added to cart!", "success")
     return redirect(url_for('dashboard'))
+
+@app.route('/update_cart/<int:cart_id>', methods=['POST'])
+def update_cart(cart_id):
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+    
+    action = request.form.get('action')  # 'increase' or 'decrease'
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Verify this cart item belongs to the user and get stock info
+    cursor.execute("""
+        SELECT c.*, i.stock FROM cart c 
+        JOIN items i ON c.item_id = i.id 
+        WHERE c.id = ? AND c.user_id = ?
+    """, (cart_id, session['user_id']))
+    cart_item = cursor.fetchone()
+    
+    if not cart_item:
+        flash("Cart item not found.", "error")
+    else:
+        if action == 'increase':
+            if cart_item['quantity'] < cart_item['stock']:
+                cursor.execute("UPDATE cart SET quantity = quantity + 1 WHERE id = ?", (cart_id,))
+            else:
+                flash("Cannot exceed available stock.", "error")
+        elif action == 'decrease':
+            if cart_item['quantity'] > 1:
+                cursor.execute("UPDATE cart SET quantity = quantity - 1 WHERE id = ?", (cart_id,))
+            else:
+                cursor.execute("DELETE FROM cart WHERE id = ?", (cart_id,))
+                flash("Item removed from cart.", "success")
+    
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    return redirect(url_for('cart'))
+
+@app.route('/remove_from_cart/<int:cart_id>', methods=['POST'])
+def remove_from_cart(cart_id):
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM cart WHERE id = ? AND user_id = ?", (cart_id, session['user_id']))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    flash("Item removed from cart.", "success")
+    return redirect(url_for('cart'))
 
 @app.route('/cart')
 def cart():
@@ -311,7 +429,8 @@ def cart():
     cursor = conn.cursor()
     
     query = """
-    SELECT c.id as cart_id, c.quantity, i.id as item_id, i.name, i.price, i.image_url, (c.quantity * i.price) as subtotal
+    SELECT c.id as cart_id, c.quantity, i.id as item_id, i.name, i.price, 
+           i.image_url, i.stock, (c.quantity * i.price) as subtotal
     FROM cart c 
     JOIN items i ON c.item_id = i.id 
     WHERE c.user_id = ?
@@ -320,11 +439,16 @@ def cart():
     cart_items = cursor.fetchall()
     
     total_price = sum(item['subtotal'] for item in cart_items)
+    item_count = sum(item['quantity'] for item in cart_items)
     
     cursor.close()
     conn.close()
     
-    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price, item_count=item_count)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECKOUT & PAYMENT
+# ─────────────────────────────────────────────────────────────────────────────
 
 @app.route('/checkout', methods=['POST'])
 def checkout():
@@ -334,9 +458,14 @@ def checkout():
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    # Get user address for delivery
+    cursor.execute("SELECT address FROM users WHERE id = ?", (session['user_id'],))
+    user_row = cursor.fetchone()
+    delivery_address = user_row['address'] if user_row else ''
+    
     # Calculate Total & Check Stock
     query = """
-    SELECT c.quantity, i.id as item_id, i.price, i.stock 
+    SELECT c.quantity, i.id as item_id, i.name, i.price, i.stock, i.image_url
     FROM cart c 
     JOIN items i ON c.item_id = i.id 
     WHERE c.user_id = ?
@@ -344,89 +473,114 @@ def checkout():
     cursor.execute(query, (session['user_id'],))
     cart_items = cursor.fetchall()
 
-    total_price = sum(item['quantity'] * item['price'] for item in cart_items)
-
-    if total_price > 0:
-        # Check sufficient stock
-        for item in cart_items:
-            if item['quantity'] > item['stock']:
-                flash("Insufficient stock for one or more items.", "error")
-                cursor.close()
-                conn.close()
-                return redirect(url_for('cart'))
-
-        payment_method = request.form.get('payment_method', 'online')
-
-        # ── Cash on Delivery flow ────────────────────────────────────────────
-        if payment_method == 'cod':
-            try:
-                # 1. Record COD order
-                cursor.execute("""
-                    INSERT INTO orders (user_id, total_price, razorpay_order_id, status)
-                    VALUES (?, ?, NULL, 'cod')
-                """, (session['user_id'], total_price))
-
-                # 2. Decrement stock
-                for item in cart_items:
-                    cursor.execute(
-                        "UPDATE items SET stock = stock - ? WHERE id = ?",
-                        (item['quantity'], item['item_id'])
-                    )
-
-                # 3. Clear cart
-                cursor.execute("DELETE FROM cart WHERE user_id = ?", (session['user_id'],))
-
-                conn.commit()
-                cursor.close()
-                conn.close()
-
-                flash("Order placed successfully! Pay with cash on delivery. 🎉", "success")
-                return redirect(url_for('dashboard'))
-
-            except Exception as e:
-                conn.rollback()
-                cursor.close()
-                conn.close()
-                flash(f"Could not place COD order: {str(e)}", "error")
-                return redirect(url_for('cart'))
-
-        # ── Online (Razorpay) flow ───────────────────────────────────────────
-        amount_paise = int(total_price * 100)
-        data = {
-            "amount": amount_paise,
-            "currency": "INR",
-            "receipt": f"receipt_{session['user_id']}",
-            "payment_capture": 1
-        }
-        
-        try:
-            razorpay_order = razorpay_client.order.create(data=data)
-            razorpay_order_id = razorpay_order['id']
-            
-            cursor.execute("""
-                INSERT INTO orders (user_id, total_price, razorpay_order_id, status) 
-                VALUES (?, ?, ?, 'pending')
-            """, (session['user_id'], total_price, razorpay_order_id))
-            conn.commit()
-            cursor.close()
-            conn.close()
-            
-            return render_template('checkout_payment.html', 
-                                 order_id=razorpay_order_id, 
-                                 amount=amount_paise, 
-                                 key_id=RAZORPAY_KEY_ID,
-                                 total_price=total_price)
-                                 
-        except Exception as e:
-            flash(f"Payment gateway error: {str(e)}", "error")
-            cursor.close()
-            conn.close()
-            return redirect(url_for('cart'))
-    else:
+    if not cart_items:
         flash("Your cart is empty.", "error")
         cursor.close()
         conn.close()
         return redirect(url_for('dashboard'))
+
+    total_price = sum(item['quantity'] * item['price'] for item in cart_items)
+
+    # Check sufficient stock
+    for item in cart_items:
+        if item['quantity'] > item['stock']:
+            flash(f"Insufficient stock for {item['name']}. Available: {item['stock']}", "error")
+            cursor.close()
+            conn.close()
+            return redirect(url_for('cart'))
+
+    payment_method = request.form.get('payment_method', 'online')
+
+    # ── Cash on Delivery flow ────────────────────────────────────────────
+    if payment_method == 'cod':
+        try:
+            # 1. Record COD order
+            cursor.execute("""
+                INSERT INTO orders (user_id, total_price, razorpay_order_id, status, payment_method, delivery_address)
+                VALUES (?, ?, NULL, 'confirmed', 'cod', ?)
+            """, (session['user_id'], total_price, delivery_address))
+            order_id = cursor.lastrowid
+
+            # 2. Save order items
+            for item in cart_items:
+                cursor.execute("""
+                    INSERT INTO order_items (order_id, item_id, item_name, quantity, price_at_time, image_url)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (order_id, item['item_id'], item['name'], item['quantity'], item['price'], item['image_url']))
+
+            # 3. Decrement stock
+            for item in cart_items:
+                cursor.execute(
+                    "UPDATE items SET stock = stock - ? WHERE id = ?",
+                    (item['quantity'], item['item_id'])
+                )
+
+            # 4. Clear cart
+            cursor.execute("DELETE FROM cart WHERE user_id = ?", (session['user_id'],))
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            flash("Order placed successfully! Pay with cash on delivery. 🎉", "success")
+            return redirect(url_for('order_detail', order_id=order_id))
+
+        except Exception as e:
+            conn.rollback()
+            cursor.close()
+            conn.close()
+            flash(f"Could not place COD order: {str(e)}", "error")
+            return redirect(url_for('cart'))
+
+    # ── Online (Razorpay) flow ───────────────────────────────────────────
+    if not razorpay_client:
+        flash("Online payment is currently unavailable. Please use Cash on Delivery.", "error")
+        cursor.close()
+        conn.close()
+        return redirect(url_for('cart'))
+
+    amount_paise = int(total_price * 100)
+    data = {
+        "amount": amount_paise,
+        "currency": "INR",
+        "receipt": f"receipt_{session['user_id']}_{int(datetime.now().timestamp())}",
+        "payment_capture": 1
+    }
+    
+    try:
+        razorpay_order = razorpay_client.order.create(data=data)
+        razorpay_order_id = razorpay_order['id']
+        
+        # Create order record
+        cursor.execute("""
+            INSERT INTO orders (user_id, total_price, razorpay_order_id, status, payment_method, delivery_address) 
+            VALUES (?, ?, ?, 'pending', 'online', ?)
+        """, (session['user_id'], total_price, razorpay_order_id, delivery_address))
+        order_id = cursor.lastrowid
+
+        # Save order items
+        for item in cart_items:
+            cursor.execute("""
+                INSERT INTO order_items (order_id, item_id, item_name, quantity, price_at_time, image_url)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (order_id, item['item_id'], item['name'], item['quantity'], item['price'], item['image_url']))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return render_template('checkout_payment.html', 
+                             order_id=razorpay_order_id, 
+                             amount=amount_paise, 
+                             key_id=RAZORPAY_KEY_ID,
+                             total_price=total_price,
+                             internal_order_id=order_id)
+                             
+    except Exception as e:
+        flash(f"Payment gateway error: {str(e)}", "error")
+        cursor.close()
+        conn.close()
+        return redirect(url_for('cart'))
 
 @app.route('/verify_payment', methods=['POST'])
 def verify_payment():
@@ -451,15 +605,19 @@ def verify_payment():
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # 1. Update Order Status
+        # 1. Update Order Status to confirmed
         cursor.execute("""
             UPDATE orders 
-            SET status = 'paid', razorpay_payment_id = ? 
+            SET status = 'confirmed', razorpay_payment_id = ? 
             WHERE razorpay_order_id = ?
         """, (payment_id, order_id))
         
-        # 2. Decrease Stock
-        # First, find what was in the cart for this user
+        # 2. Get the internal order id
+        cursor.execute("SELECT id FROM orders WHERE razorpay_order_id = ?", (order_id,))
+        order_row = cursor.fetchone()
+        internal_order_id = order_row['id'] if order_row else None
+        
+        # 3. Decrease Stock
         cursor.execute("""
             SELECT c.quantity, i.id as item_id 
             FROM cart c 
@@ -471,14 +629,16 @@ def verify_payment():
         for item in cart_items:
             cursor.execute("UPDATE items SET stock = stock - ? WHERE id = ?", (item['quantity'], item['item_id']))
             
-        # 3. Clear Cart
+        # 4. Clear Cart
         cursor.execute("DELETE FROM cart WHERE user_id = ?", (session['user_id'],))
         
         conn.commit()
         cursor.close()
         conn.close()
         
-        flash("Payment successful! Your order has been placed.", "success")
+        flash("Payment successful! Your order has been placed. 🎉", "success")
+        if internal_order_id:
+            return redirect(url_for('order_detail', order_id=internal_order_id))
         return redirect(url_for('dashboard'))
         
     except Exception as e:
@@ -486,10 +646,86 @@ def verify_payment():
         flash("Payment verification failed. Please contact support.", "error")
         return redirect(url_for('cart'))
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('home'))
+# ─────────────────────────────────────────────────────────────────────────────
+# ORDER TRACKING
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/order/<int:order_id>')
+def order_detail(order_id):
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Get order — verify it belongs to the user, or user is admin
+    if session.get('role') == 'Admin':
+        cursor.execute("""
+            SELECT o.*, u.username, u.address as user_address, u.mobile_no, u.email 
+            FROM orders o 
+            JOIN users u ON o.user_id = u.id 
+            WHERE o.id = ?
+        """, (order_id,))
+    else:
+        cursor.execute("""
+            SELECT o.*, u.username, u.address as user_address, u.mobile_no, u.email 
+            FROM orders o 
+            JOIN users u ON o.user_id = u.id 
+            WHERE o.id = ? AND o.user_id = ?
+        """, (order_id, session['user_id']))
+    
+    order = cursor.fetchone()
+    if not order:
+        flash("Order not found.", "error")
+        cursor.close()
+        conn.close()
+        return redirect(url_for('profile'))
+    
+    # Get order items
+    cursor.execute("""
+        SELECT oi.item_name, oi.quantity, oi.price_at_time, oi.image_url,
+               (oi.quantity * oi.price_at_time) as subtotal
+        FROM order_items oi 
+        WHERE oi.order_id = ?
+    """, (order_id,))
+    items = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    order_dict = dict(order)
+    items_list = [dict(i) for i in items]
+    
+    # Parse order date
+    if order_dict.get('order_date'):
+        try:
+            order_dict['order_date'] = datetime.strptime(order_dict['order_date'], '%Y-%m-%d %H:%M:%S')
+        except (ValueError, TypeError):
+            pass
+    
+    # Define tracking steps
+    all_steps = ['confirmed', 'shipped', 'out_for_delivery', 'delivered']
+    current_status = order_dict['status']
+    
+    if current_status == 'pending':
+        completed_steps = []
+    elif current_status == 'cancelled':
+        completed_steps = []
+    elif current_status in all_steps:
+        idx = all_steps.index(current_status)
+        completed_steps = all_steps[:idx + 1]
+    else:
+        completed_steps = []
+    
+    return render_template('order_detail.html', 
+                         order=order_dict, 
+                         order_items=items_list,
+                         all_steps=all_steps,
+                         completed_steps=completed_steps)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ADMIN ROUTES
+# ─────────────────────────────────────────────────────────────────────────────
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
@@ -518,10 +754,120 @@ def admin_dashboard():
     cursor.execute("SELECT DISTINCT category FROM items ORDER BY category")
     categories = [row['category'] for row in cursor.fetchall()]
     
+    # ── Admin Stats ──
+    cursor.execute("SELECT COUNT(*) as count FROM orders")
+    total_orders_count = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COALESCE(SUM(total_price), 0) as revenue FROM orders WHERE status NOT IN ('pending', 'cancelled')")
+    total_revenue = cursor.fetchone()['revenue']
+
+    cursor.execute("SELECT COUNT(*) as count FROM orders WHERE status IN ('confirmed', 'pending')")
+    pending_orders_count = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COUNT(*) as count FROM users WHERE role = 'User'")
+    total_users = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COUNT(*) as count FROM items")
+    total_products = cursor.fetchone()['count']
+
+    # Low stock items count
+    cursor.execute("SELECT COUNT(*) as count FROM items WHERE stock < 5")
+    low_stock_count = cursor.fetchone()['count']
+    
     cursor.close()
     conn.close()
     
-    return render_template('admin_dashboard.html', items=items, categories=categories, profile_pic=profile_pic, current_category=category)
+    return render_template('admin_dashboard.html', items=items, categories=categories, 
+                         profile_pic=profile_pic, current_category=category,
+                         total_orders_count=total_orders_count,
+                         total_revenue=total_revenue,
+                         pending_orders_count=pending_orders_count,
+                         total_users=total_users,
+                         total_products=total_products,
+                         low_stock_count=low_stock_count)
+
+@app.route('/admin/orders')
+def admin_orders():
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        flash("Access Denied.", "error")
+        return redirect(url_for('home'))
+    
+    status_filter = request.args.get('status', 'all')
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Get profile pic for navbar
+    cursor.execute("SELECT profile_pic FROM users WHERE id = ?", (session['user_id'],))
+    user_data = cursor.fetchone()
+    profile_pic = user_data['profile_pic'] if user_data and user_data['profile_pic'] else 'default_dp.png'
+    
+    if status_filter == 'all':
+        cursor.execute("""
+            SELECT o.*, u.username,
+                   (SELECT COUNT(*) FROM order_items WHERE order_id = o.id) as item_count
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            ORDER BY o.order_date DESC
+        """)
+    else:
+        cursor.execute("""
+            SELECT o.*, u.username,
+                   (SELECT COUNT(*) FROM order_items WHERE order_id = o.id) as item_count
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            WHERE o.status = ?
+            ORDER BY o.order_date DESC
+        """, (status_filter,))
+    
+    orders = cursor.fetchall()
+    
+    # Get counts for filter tabs
+    cursor.execute("SELECT COUNT(*) as count FROM orders")
+    total_count = cursor.fetchone()['count']
+    
+    cursor.execute("SELECT status, COUNT(*) as count FROM orders GROUP BY status")
+    status_counts = {row['status']: row['count'] for row in cursor.fetchall()}
+    status_counts['all'] = total_count
+    
+    cursor.close()
+    conn.close()
+    
+    orders_list = []
+    for o in orders:
+        o_dict = dict(o)
+        if o_dict.get('order_date'):
+            try:
+                o_dict['order_date'] = datetime.strptime(o_dict['order_date'], '%Y-%m-%d %H:%M:%S')
+            except (ValueError, TypeError):
+                pass
+        orders_list.append(o_dict)
+    
+    return render_template('admin_orders.html', orders=orders_list, 
+                         status_filter=status_filter, status_counts=status_counts,
+                         profile_pic=profile_pic)
+
+@app.route('/admin/order/update_status/<int:order_id>', methods=['POST'])
+def admin_update_order_status(order_id):
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        return redirect(url_for('home'))
+    
+    new_status = request.form.get('status')
+    valid_statuses = ['confirmed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled']
+    
+    if new_status not in valid_statuses:
+        flash("Invalid status.", "error")
+        return redirect(url_for('admin_orders'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE orders SET status = ? WHERE id = ?", (new_status, order_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    flash(f"Order #{order_id} status updated to {new_status.replace('_', ' ').title()}.", "success")
+    return redirect(url_for('admin_orders'))
 
 @app.route('/admin/item/add', methods=['POST'])
 def add_item():
