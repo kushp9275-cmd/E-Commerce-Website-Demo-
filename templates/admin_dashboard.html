@@ -13,6 +13,7 @@
     <nav class="navbar">
         <div class="nav-brand">Admin Portal</div>
         <div class="nav-links">
+            <a href="{{ url_for('admin_orders') }}" class="welcome-text">Orders</a>
             <form id="dp-form" action="{{ url_for('upload_dp') }}" method="POST" enctype="multipart/form-data" class="dp-form" style="display: flex; align-items: center; background: transparent; padding: 0;">
                 <label for="dp-upload" class="dp-label" title="Change Profile Picture">
                     <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}" alt="DP" class="profile-pic" onerror="this.src='https://ui-avatars.com/api/?name={{ session['username'] }}&background=random'">
@@ -24,7 +25,7 @@
             <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         </div>
     </nav>
-
+ 
     <!-- Flash Messages -->
     <div class="flash-messages dashboard-flash">
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -35,7 +36,7 @@
       {% endif %}
     {% endwith %}
     </div>
-
+ 
     <!-- Main Layout Grid -->
     <main class="dashboard-main dashboard-layout">
         
@@ -49,13 +50,16 @@
                 {% endfor %}
             </div>
         </aside>
-
+ 
         <!-- Admin Table Content -->
         <section class="dashboard-content">
             <div class="admin-container" style="margin: 0; width: 100%; max-width: none;">
                 <div class="header-section">
                     <h2>{% if current_category == 'All' %}All Items{% else %}{{ current_category }} Items{% endif %} Inventory</h2>
-                    <button class="btn-primary" onclick="openModal('addModal')">+ Add Item / Division</button>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="{{ url_for('admin_orders') }}" class="btn-primary" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">📦 Manage Orders</a>
+                        <button class="btn-primary" onclick="openModal('addModal')">+ Add Item / Division</button>
+                    </div>
                 </div>
 
         <table class="premium-table">
