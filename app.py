@@ -533,11 +533,19 @@ def checkout():
             return redirect(url_for('cart'))
 
     # ── Online (Razorpay) flow ───────────────────────────────────────────
-    if not razorpay_client:
+    # Ensure Razorpay client and credentials are available
+    if not razorpay_client or not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
         flash("Online payment is currently unavailable. Please use Cash on Delivery.", "error")
         cursor.close()
         conn.close()
-        return redirect(url_for('cart'))
+        # Render the payment page with fallback visible
+        return render_template('checkout_payment.html',
+                               order_id=None,
+                               amount=int(total_price * 100),
+                               key_id=RAZORPAY_KEY_ID,
+                               total_price=total_price,
+                               internal_order_id=None,
+                               payment_unavailable=True)
 
     amount_paise = int(total_price * 100)
     data = {
