@@ -3,29 +3,40 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}E‑Commerce{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}" />
+    <meta name="description" content="Mart – your premium online shopping destination." />
+    <title>{% block title %}Mart{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <script src="{{ url_for('static', filename='theme.js') }}" defer></script>
+    <script>
+      // Apply stored theme before first paint to avoid flash
+      (function(){
+        var t = localStorage.getItem('theme');
+        if(t) document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="glass">
+<body>
     {% include 'navbar.html' %}
-    <div class="flash-messages">
+
+    <div class="flash-messages" style="padding: 0 1.5rem; margin-top: 0.5rem;">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert {{ category }} glass mt-2 p-2 rounded">
-                        {{ message }}
-                    </div>
+                    <div class="flash {{ category }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
     </div>
-    <main class="container mx-auto p-4">
+
+    <main>
         {% block content %}{% endblock %}
     </main>
+
     {% include 'footer.html' %}
+
+    <script src="{{ url_for('static', filename='theme.js') }}" defer></script>
 </body>
 </html>
