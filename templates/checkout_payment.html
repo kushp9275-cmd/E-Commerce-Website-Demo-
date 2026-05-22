@@ -50,61 +50,68 @@
         <input type="hidden" name="razorpay_signature" id="razorpay_signature">
     </form>
 
-    <script>
-        var paymentFailed = false;
+    {% if not payment_unavailable %}
+<script>
+    var paymentFailed = false;
 
-        try {
-            var options = {
-                "key": "{{ key_id }}",
-                "amount": "{{ amount }}", 
-                "currency": "INR",
-                "name": "Mart",
-                "description": "Payment for Order #{{ internal_order_id }}",
-                "image": "/static/images/logo.png",
-                "order_id": "{{ order_id }}",
-                "handler": function (response){
-                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
-                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
-                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
-                    document.getElementById('razorpay-form').submit();
-                },
-                "prefill": {
-                    "name": "{{ session.username }}",
-                    "email": "{{ session.email or '' }}"
-                },
-                "theme": {
-                    "color": "#6366f1"
-                },
-                "modal": {
-                    "ondismiss": function(){
-                        window.location.replace("/cart");
-                    }
+    try {
+        var options = {
+            "key": "{{ key_id }}",
+            "amount": "{{ amount }}", 
+            "currency": "INR",
+            "name": "Mart",
+            "description": "Payment for Order #{{ internal_order_id }}",
+            "image": "/static/images/logo.png",
+            "order_id": "{{ order_id }}",
+            "handler": function (response){
+                document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                document.getElementById('razorpay-form').submit();
+            },
+            "prefill": {
+                "name": "{{ session.username }}",
+                "email": "{{ session.email or '' }}"
+            },
+            "theme": {
+                "color": "#6366f1"
+            },
+            "modal": {
+                "ondismiss": function(){
+                    window.location.replace("/cart");
                 }
-            };
-            var rzp1 = new Razorpay(options);
-            
-            rzp1.on('payment.failed', function (response){
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        
+        rzp1.on('payment.failed', function (response){
+            document.getElementById('payment-fallback').style.display = 'block';
+            document.querySelector('.loader').style.display = 'none';
+        });
+
+        // Open Razorpay on page load
+        window.onload = function() {
+            try {
+                rzp1.open();
+            } catch(e) {
                 document.getElementById('payment-fallback').style.display = 'block';
                 document.querySelector('.loader').style.display = 'none';
-            });
-
-            // Open Razorpay on page load
-            window.onload = function() {
-                try {
-                    rzp1.open();
-                } catch(e) {
-                    document.getElementById('payment-fallback').style.display = 'block';
-                    document.querySelector('.loader').style.display = 'none';
-                }
-            };
-        } catch(e) {
-            // Razorpay JS failed to load
-            window.onload = function() {
-                document.getElementById('payment-fallback').style.display = 'block';
-                document.querySelector('.loader').style.display = 'none';
-            };
-        }
-    </script>
+            }
+        };
+    } catch(e) {
+        // Razorpay JS failed to load
+        window.onload = function() {
+            document.getElementById('payment-fallback').style.display = 'block';
+            document.querySelector('.loader').style.display = 'none';
+        };
+    }
+</script>
+{% else %}
+<div style="color: var(--danger); margin-bottom: 1.5rem; font-weight: 600; font-size: 0.9rem; text-align: center;">
+    ⚠️ Payment gateway is currently unavailable. Please use Cash on Delivery.
+</div>
+<a href="/cart" class="btn-primary" style="display: block; width: 100%; padding: 0.8rem 1.5rem; text-decoration: none; box-sizing: border-box; text-align: center;">Return to Cart</a>
+{% endif %}
 
     <style>
         @keyframes spin {
