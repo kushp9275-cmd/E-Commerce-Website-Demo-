@@ -55,11 +55,41 @@ def create_database_and_table(db_path='mart.db'):
         total_price DECIMAL(10, 2) NOT NULL,
         razorpay_order_id VARCHAR(255),
         razorpay_payment_id VARCHAR(255),
-        status VARCHAR(20) DEFAULT 'pending',
+        payment_method VARCHAR(20) DEFAULT 'online',
+        status VARCHAR(30) DEFAULT 'pending',
+        delivery_address TEXT,
         order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )
     """)
+
+    # Create order_items table — tracks individual items per order
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS order_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        order_id INT NOT NULL,
+        item_id INT NOT NULL,
+        item_name VARCHAR(100) NOT NULL,
+        quantity INT NOT NULL,
+        price_at_time DECIMAL(10, 2) NOT NULL,
+        image_url VARCHAR(255),
+        FOREIGN KEY (order_id) REFERENCES orders(id),
+        FOREIGN KEY (item_id) REFERENCES items(id)
+    )
+    """)
+
+    # --- Migrations for existing databases ---
+    # Add payment_method column if it doesn't exist
+    try:
+        cursor.execute("ALTER TABLE orders ADD COLUMN payment_method VARCHAR(20) DEFAULT 'online'")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+
+    # Add delivery_address column if it doesn't exist
+    try:
+        cursor.execute("ALTER TABLE orders ADD COLUMN delivery_address TEXT")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
 
     # Check for items
     cursor.execute("SELECT COUNT(*) FROM items")
