@@ -5,20 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart - E-Commerce Website</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color:white;">E-Commerce Website Dashboard</a></div>
         <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="logout-btn" style="border-color: var(--primary-color);">← Continue Shopping</a>
             <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         </div>
     </nav>
 
+    <!-- Flash Messages -->
+    <div class="flash-messages dashboard-flash">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+    </div>
+
     <!-- Cart View -->
     <main class="dashboard-main">
-        <h2 class="section-title">Your Shopping Cart</h2>
+        <h2 class="section-title">Your Shopping Cart {% if item_count > 0 %}<span class="cart-count-label">({{ item_count }} item{{ 's' if item_count != 1 else '' }})</span>{% endif %}</h2>
         
         <div class="cart-container">
             {% if cart_items %}
@@ -27,19 +39,50 @@
                     <div class="cart-item">
                         <img src="{{ item.image_url if item.image_url.startswith('http') else url_for('static', filename='uploads/' + item.image_url) }}" alt="{{ item.name }}" class="cart-item-img">
                         <div class="cart-item-details">
-                            <span class="product-id" style="font-size: 0.7rem; color: var(--primary-color); font-weight: 600;">MT-{{ "%03d"|format(loop.index) }}</span>
+                            <span class="product-id" style="font-size: 0.7rem; color: var(--primary-color); font-weight: 600;">MT-{{ "%03d"|format(item.item_id) }}</span>
                             <h3>{{ item.name }}</h3>
-                            <p>₹{{ "%.2f"|format(item.price) }} x {{ item.quantity }}</p>
+                            <p class="cart-item-price-each">₹{{ "%.2f"|format(item.price) }} each</p>
                         </div>
+                        
+                        <!-- Quantity Controls -->
+                        <div class="qty-controls">
+                            <form action="{{ url_for('update_cart', cart_id=item.cart_id) }}" method="POST" style="display:inline; padding:0; background:transparent; height:auto;">
+                                <input type="hidden" name="action" value="decrease">
+                                <button type="submit" class="qty-btn qty-minus" title="Decrease quantity">−</button>
+                            </form>
+                            <span class="qty-value">{{ item.quantity }}</span>
+                            <form action="{{ url_for('update_cart', cart_id=item.cart_id) }}" method="POST" style="display:inline; padding:0; background:transparent; height:auto;">
+                                <input type="hidden" name="action" value="increase">
+                                <button type="submit" class="qty-btn qty-plus" title="Increase quantity" {% if item.quantity >= item.stock %}disabled{% endif %}>+</button>
+                            </form>
+                        </div>
+
                         <div class="cart-item-subtotal">
                             <strong>₹{{ "%.2f"|format(item.subtotal) }}</strong>
                         </div>
+
+                        <!-- Remove Button -->
+                        <form action="{{ url_for('remove_from_cart', cart_id=item.cart_id) }}" method="POST" style="display:inline; padding:0; background:transparent; height:auto;">
+                            <button type="submit" class="remove-btn" title="Remove item" onclick="return confirm('Remove {{ item.name }} from cart?');">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </form>
                     </div>
                     {% endfor %}
                 </div>
                 
                 <div class="cart-summary">
                     <h3>Order Summary</h3>
+                    <div class="summary-details">
+                        <div class="summary-row-item">
+                            <span>Items ({{ item_count }})</span>
+                            <span>₹{{ "%.2f"|format(total_price) }}</span>
+                        </div>
+                        <div class="summary-row-item">
+                            <span>Delivery</span>
+                            <span class="free-delivery">FREE</span>
+                        </div>
+                    </div>
                     <div class="summary-row">
                         <span>Total:</span>
                         <h2>₹{{ "%.2f"|format(total_price) }}</h2>
@@ -67,19 +110,29 @@
                                 </span>
                             </label>
                         </div>
-                        <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+                        <button type="submit" class="checkout-btn">🔒 Proceed to Checkout</button>
                     </form>
-                    <a href="{{ url_for('dashboard') }}" class="continue-shopping">Continue Shopping</a>
+                    <a href="{{ url_for('dashboard') }}" class="continue-shopping">← Continue Shopping</a>
                 </div>
             {% else %}
                 <div class="empty-cart">
+                    <div class="empty-cart-icon">🛒</div>
                     <h3>Your cart is empty!</h3>
                     <p>Looks like you haven't added anything to your cart yet.</p>
-                    <a href="{{ url_for('dashboard') }}" class="continue-shopping">Browse Products</a>
+                    <a href="{{ url_for('dashboard') }}" class="continue-shopping-btn">Browse Products</a>
                 </div>
             {% endif %}
         </div>
     </main>
 
+    <script>
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.flash');
+            messages.forEach(msg => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 3000);
+    </script>
 </body>
 </html>
