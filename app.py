@@ -21,11 +21,17 @@ create_database_and_table(db_path)
 # Razorpay Configuration
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
-try:
-    razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-except Exception:
+
+if RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET:
+    try:
+        razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+        print(f"Razorpay initialized with key: {RAZORPAY_KEY_ID[:12]}...")
+    except Exception as e:
+        razorpay_client = None
+        print(f"WARNING: Razorpay client init failed: {e}. Online payments disabled.")
+else:
     razorpay_client = None
-    print("WARNING: Razorpay client could not be initialized. Online payments disabled.")
+    print("WARNING: RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET not set. Online payments disabled.")
 
 # File upload setup
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
@@ -582,10 +588,28 @@ def checkout():
                              amount=amount_paise, 
                              key_id=RAZORPAY_KEY_ID,
                              total_price=total_price,
-                             internal_order_id=order_id)
+                             internal_order_id=order_id,
+                             payment_unavailable=False)
                              
+    except razorpay.errors.BadRequestError as e:
+        print(f"Razorpay BadRequestError: {e}")
+        flash("Payment gateway error. Please try again or use Cash on Delivery.", "error")
+        cursor.close()
+        conn.close()
+        return redirect(url_for('cart'))
+    except (razorpay.errors.ServerError, razorpay.errors.GatewayError) as e:
+        print(f"Razorpay server/gateway error: {e}")
+        flash("Payment service is temporarily down. Please try again later or use Cash on Delivery.", "error")
+        cursor.close()
+        conn.close()
+        return redirect(url_for('cart'))
     except Exception as e:
-        flash(f"Payment gateway error: {str(e)}", "error")
+        error_msg = str(e).lower()
+        print(f"Razorpay order creation failed: {e}")
+        if 'authentication' in error_msg or 'unauthorized' in error_msg or 'auth' in error_msg:
+            flash("Online payment is temporarily unavailable due to a configuration issue. Please use Cash on Delivery.", "error")
+        else:
+            flash(f"Payment gateway error. Please use Cash on Delivery.", "error")
         cursor.close()
         conn.close()
         return redirect(url_for('cart'))
