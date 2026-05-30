@@ -1,0 +1,515 @@
+Item ID,Item Name,Description,Sales Rate,Category Name,image_url,Available Stock
+1,GOPI TASTY,Fresh quality product from GOPI NAMKEEN category.,10,GOPI NAMKEEN,,15
+2,MINI CHOCOBAR,Fresh quality product from Havmor category.,10,Havmor,,15
+3,KASHMIRI KULFI (30RS),Fresh quality product from Havmor category.,30,Havmor,,15
+4,YELLOW KHEERU,Fresh quality product from KHEERU category.,30,KHEERU,,15
+5,WHITE KHEERU (500g),Fresh quality product from KHEERU category.,25,KHEERU,,15
+6,DAVAT JEERA,Fresh quality product from Cold Drinks category.,10,Cold Drinks,,15
+7,GIPPI POP RINGS CHEESE (10RS),Fresh quality product from Snakes category.,10,Snakes,amul_cheese.jpg,15
+8,240G MUNG DAAL,Fresh quality product from Snakes category.,45,Snakes,,15
+9,145G CHATAKA PATAKA MASALA MASTI,Fresh quality product from Snakes category.,30,Snakes,,15
+10,KATAK BATAK CHILLI LEMON (10RS),Fresh quality product from Snakes category.,10,Snakes,,15
+11,CRUNCHEX CHILLI TADKA (10RS),Fresh quality product from Snakes category.,10,Snakes,,15
+12,MAGGIE (55G),Fresh quality product from Nestle category.,20,Nestle,,15
+13,MAGGIE (75G),Fresh quality product from Nestle category.,15,Nestle,,15
+14,JAY RANCHHOD RED CHILLI POWDER (200g),Fresh quality product from JAY RANCHHOD category.,120,JAY RANCHHOD,,15
+15,JAY RANCHHOD KASHMIRI KUMTHI CHILLI POWDER (200g),Fresh quality product from JAY RANCHHOD category.,210,JAY RANCHHOD,,15
+16,JAY RANCHHOD RED CHILLI POWDER (100g),Fresh quality product from JAY RANCHHOD category.,60,JAY RANCHHOD,,15
+17,JAY RANCHHOD GARAM MASALA POWDER (100g),Fresh quality product from JAY RANCHHOD category.,110,JAY RANCHHOD,,15
+18,JAY RANCHHOD KASHMIRI KUMTHI POWDER (100g),Fresh quality product from JAY RANCHHOD category.,105,JAY RANCHHOD,,15
+19,JAY RANCHHOD CORIANDER CUMIN POWDER (200g),Fresh quality product from JAY RANCHHOD category.,100,JAY RANCHHOD,,15
+20,JAY RANCHHOD CORIANDER CUMIN POWDER (100g),Fresh quality product from JAY RANCHHOD category.,50,JAY RANCHHOD,,15
+21,JAY RANCHHOD TURMERIC POWDER (200g),Fresh quality product from JAY RANCHHOD category.,100,JAY RANCHHOD,,15
+22,JAY RANCHHOD TURMERIC POWDER (100g),Fresh quality product from JAY RANCHHOD category.,52,JAY RANCHHOD,,15
+23,surf excel (1.8L),Fresh quality product from Other category.,260,Other,,15
+24,ENO,Fresh quality product from Other category.,60,Other,,15
+25,KKRUNCH YOUERT BERRY,Fresh quality product from Havmor category.,60,Havmor,,15
+26,SHANKAR SOUR MASALA,Fresh quality product from MASALA category.,290,MASALA,,15
+27,SHANKAR SWEET MASALA,Fresh quality product from MASALA category.,290,MASALA,,15
+28,HARPIC RED (500ML),Fresh quality product from Detergent category.,118,Detergent,,15
+29,NIMBOOZ,Fresh quality product from Cold Drinks category.,20,Cold Drinks,,15
+30,NYLON GATHIYA (10RS),Fresh quality product from Gopal category.,5,Gopal,,15
+31,LASSI 200 ML,Fresh quality product from Amul category.,20,Amul,amul_lassi.jpg,15
+32,SHRIKHAND ELAICHI (200G),Fresh quality product from Amul category.,55,Amul,amul_shrikhand.jpg,15
+33,SHRIKHAND RAJBHOG (200G),Fresh quality product from Amul category.,60,Amul,amul_shrikhand.jpg,15
+34,SHRIKHAND BUTTERSCOTCH (200G),Fresh quality product from Amul category.,58,Amul,amul_butter.jpg,15
+35,RATNAGIRI HAPUS CUP (50RS),Fresh quality product from Havmor category.,50,Havmor,,15
+36,TIKHA GATHIYA (250G),Fresh quality product from Gopal category.,49,Gopal,,15
+37,CRUNCHEM MASALA MASTI WAFERS (10RS),Fresh quality product from Snakes category.,10,Snakes,,15
+38,GARAM MASALA (10RS) V,Fresh quality product from VICHARE MASALA category.,10,VICHARE MASALA,,15
+39,TEA MASALA (50G),Fresh quality product from VICHARE MASALA category.,73,VICHARE MASALA,,15
+40,HALDI  POWDER (20RS),Fresh quality product from VICHARE MASALA category.,20,VICHARE MASALA,,15
+41,PATNI MIRCH (20RS),Fresh quality product from VICHARE MASALA category.,20,VICHARE MASALA,,15
+42,TEA MASALA (10RS),Fresh quality product from VICHARE MASALA category.,10,VICHARE MASALA,,15
+43,DHANA POWDER (10RS),Fresh quality product from VICHARE MASALA category.,10,VICHARE MASALA,,15
+44,HALDI POWDER (10RS),Fresh quality product from VICHARE MASALA category.,10,VICHARE MASALA,,15
+45,PATNI MIRCHI (10RS),Fresh quality product from VICHARE MASALA category.,10,VICHARE MASALA,,15
+46,GARAM MASALA (100G),Fresh quality product from VICHARE MASALA category.,85,VICHARE MASALA,,15
+47,GARAM  MASALA (50G),Fresh quality product from VICHARE MASALA category.,39,VICHARE MASALA,,15
+48,DHANA-JEERA POWDER (200G),Fresh quality product from VICHARE MASALA category.,80,VICHARE MASALA,,15
+49,DHANA-JEERA POWDER (100G),Fresh quality product from VICHARE MASALA category.,40,VICHARE MASALA,,15
+50,HALDAR POWDER (200G),Fresh quality product from VICHARE MASALA category.,95,VICHARE MASALA,,15
+51,HALDAR POWDER (100G),Fresh quality product from VICHARE MASALA category.,50,VICHARE MASALA,,15
+52,KUMTHI MIRCH (100G),Fresh quality product from VICHARE MASALA category.,120,VICHARE MASALA,,15
+53,PATNI MIRCH (200G),Fresh quality product from VICHARE MASALA category.,115,VICHARE MASALA,,15
+54,PATNI MIRCHI (100G),Fresh quality product from VICHARE MASALA category.,60,VICHARE MASALA,,15
+55,SHAHI PANEER MASALA (52RS),Fresh quality product from MASALA category.,52,MASALA,amul_paneer.jpg,15
+56,SHAHI PANEER MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,amul_paneer.jpg,15
+57,SHAHI BIRYANI MASALA (80RS),Fresh quality product from MASALA category.,80,MASALA,,15
+58,SHAHI BIRYANI MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+59,SAMBHAR MASALA (43RS),Fresh quality product from MASALA category.,43,MASALA,,15
+60,SAMBHAR MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+61,SABJI MASALA (39RS),Fresh quality product from MASALA category.,39,MASALA,,15
+62,SABJI MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+63,PERI PERI MASALA (5RS),Fresh quality product from MASALA category.,5,MASALA,,15
+64,PAVBHAJI MASALA (48RS),Fresh quality product from MASALA category.,48,MASALA,,15
+65,PAVBHAJI MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+66,PANIPURI MASALA (41RS),Fresh quality product from Other category.,41,Other,,15
+67,PANI PURI MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+68,KITCHEN KING MASALA (48RS),Fresh quality product from MASALA category.,48,MASALA,,15
+69,KITCHEN KING MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+70,JALJIRA POWDER,Fresh quality product from MASALA category.,2,MASALA,,15
+71,GARAM MASALA (52RS),Fresh quality product from MASALA category.,52,MASALA,,15
+72,GARAM MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+73,CHAAT MASALA (42RS),Fresh quality product from MASALA category.,42,MASALA,,15
+74,CHAAT MASALA (10RS),Fresh quality product from MASALA category.,10,MASALA,,15
+75,140G CRUNCHEM SIMPLY SALTED WAFERS,Fresh quality product from Snakes category.,40,Snakes,,15
+76,MASTI DAHI (85G),Fresh quality product from Dahi category.,10,Dahi,amul_masti_dahi.jpg,15
+77,zero suger keser pista,Fresh quality product from Havmor category.,45,Havmor,,15
+78,NYLON GATHIYA FAMILY PACK,Fresh quality product from Gopal category.,90,Gopal,,15
+79,TIKHA MITHA MIX FAMILY PACK,Fresh quality product from Gopal category.,90,Gopal,,15
+80,VANELA GATHIYA FAMILY PACK,Fresh quality product from Gopal category.,90,Gopal,,15
+81,AMAIZE FLAMIN HOT NACHOS,Fresh quality product from Snakes category.,10,Snakes,,15
+82,MASTI DAHI POUCH 1KG,Fresh quality product from Amul category.,77,Amul,amul_masti_dahi.jpg,15
+83,MASTI DAHI (390G),Fresh quality product from Amul category.,35,Amul,amul_masti_dahi.jpg,15
+84,MALAI PANEER DICE (200G),Fresh quality product from Amul category.,99,Amul,amul_paneer.jpg,15
+85,MALAI PANEER DICE (100G),Fresh quality product from Amul category.,50,Amul,amul_paneer.jpg,15
+86,AMUL DARK CHOCOLAT (150G),Fresh quality product from Amul category.,170,Amul,amul_dark_chocolate.jpg,15
+87,HAPPY CONE (10RS),Fresh quality product from Havmor category.,10,Havmor,appy_fizz.jpg,15
+88,CLOSE UP (20 RS),Fresh quality product from Toothpaste category.,20,Toothpaste,,15
+89,VIM 250ML,Fresh quality product from Detergent category.,60,Detergent,,15
+90,VIM 500ML,Fresh quality product from Detergent category.,135,Detergent,,15
+91,V - WASH 20ML,Fresh quality product from Cosmetics category.,50,Cosmetics,,15
+92,TAAZA TEA 250G,Fresh quality product from Tea category.,70,Tea,amul_taza.jpg,15
+93,SURF EXCEL MATIC TOP LOAD,Fresh quality product from Detergent category.,135,Detergent,,15
+94,SURF EXCEL MATIC FRONT LOAD 500ML,Fresh quality product from Detergent category.,150,Detergent,,15
+95,RIN BAR 160G,Fresh quality product from Soap category.,10,Soap,,15
+96,RIN POWDER 1KG,Fresh quality product from Detergent category.,114,Detergent,,15
+97,PONDS PINK LADY,Fresh quality product from Cosmetics category.,100,Cosmetics,,15
+98,PONDS PINK  LADY 40G,Fresh quality product from Cosmetics category.,51,Cosmetics,,15
+99,PEARS SHOWER GEL 250ML,Fresh quality product from Soap category.,135,Soap,,15
+100,PEARS 75G,Fresh quality product from Soap category.,35,Soap,,15
+101,LAKME SUNSCREEN 18G,Fresh quality product from Cosmetics category.,95,Cosmetics,,15
+102,LIPTON GREEN TEA,Fresh quality product from Tea category.,190,Tea,,15
+103,LIFEBOY 40G,Fresh quality product from Soap category.,10,Soap,,15
+104,SOUP TOMATO CHATPATA,Fresh quality product from souses category.,10,souses,,15
+105,SOUP MANCHOW VEG,Fresh quality product from souses category.,10,souses,,15
+106,SOUP HOT & SOUR VEG,Fresh quality product from souses category.,10,souses,,15
+107,KISSAN KETCHUP 850G,Fresh quality product from souses category.,93,souses,,15
+108,KISSAN KETCHUP 435G,Fresh quality product from souses category.,50,souses,,15
+109,KISSAN KETCHUP 95G,Fresh quality product from souses category.,15,souses,,15
+110,HELLMANNS MAYONAISE 85G,Fresh quality product from souses category.,38,souses,,15
+111,HAMAM NEEM AND TULSI 100G,Fresh quality product from Soap category.,38,Soap,,15
+112,DOVE SERUM BAR 50G,Fresh quality product from Soap category.,25,Soap,,15
+113,COMFORT FABRIC CONDITIONER 430ML,Fresh quality product from Diaper category.,120,Diaper,,15
+114,BRU INSTANT COFFE 100G,Fresh quality product from Nestle category.,300,Nestle,,15
+115,wheel soap 40g,Fresh quality product from Soap category.,10,Soap,,15
+116,GILLETE PRESTO 25RS,Fresh quality product from Shaving category.,25,Shaving,,15
+117,amul cheese cube,Fresh quality product from Cheese category.,17,Cheese,amul_cheese.jpg,15
+118,Gems,Fresh quality product from Chocolates category.,10,Chocolates,,15
+119,cadbury shots 10,Fresh quality product from Chocolates category.,10,Chocolates,,15
+120,cadbury shots,Fresh quality product from Chocolates category.,5,Chocolates,,15
+121,ORAL-B CC,Fresh quality product from Tooth Brush category.,55,Tooth Brush,,15
+122,ORAL-B S&G,Fresh quality product from Tooth Brush category.,30,Tooth Brush,,15
+123,ORAL-B BF,Fresh quality product from Tooth Brush category.,25,Tooth Brush,,15
+124,ORAL-B SC,Fresh quality product from Tooth Brush category.,18,Tooth Brush,,15
+125,ORAL-B SENSITIVE,Fresh quality product from Tooth Brush category.,22,Tooth Brush,,15
+126,GILLETE SMALL 25GM,Fresh quality product from Shaving category.,25,Shaving,,15
+127,GILLETE REG 30GM,Fresh quality product from Shaving category.,40,Shaving,,15
+128,GILLETE LIME 30GM,Fresh quality product from Shaving category.,40,Shaving,,15
+129,GILLETE FOAM REG(50GM),Fresh quality product from Shaving category.,95,Shaving,,15
+130,VICKS 25ML,Fresh quality product from Other category.,102,Other,,15
+131,VICKS 10GM,Fresh quality product from Other category.,45,Other,,15
+132,HEAD & SHOULDERS CM 90ML,Fresh quality product from Shampoo category.,79,Shampoo,,15
+133,HEAD & SHOULDERS 7IN1 72ML,Fresh quality product from Shampoo category.,79,Shampoo,,15
+134,GILLETE 3IN1 RZR,Fresh quality product from Shaving category.,125,Shaving,,15
+135,GILLETE 3IN1 R+2C PROMO,Fresh quality product from Shaving category.,224,Shaving,,15
+136,GILLETE 3IN1 2S,Fresh quality product from Shaving category.,99,Shaving,,15
+137,GILLETE 1S(15RS),Fresh quality product from Shaving category.,15,Shaving,,15
+138,GILLETE SBD 8S,Fresh quality product from Shaving category.,98,Shaving,,15
+139,GILLETE SBD 4S,Fresh quality product from Shaving category.,52,Shaving,,15
+140,GILLETE GEL 60G(SEN),Fresh quality product from Shaving category.,99,Shaving,,15
+141,GILLETE GEL 60G(MST),Fresh quality product from Shaving category.,99,Shaving,,15
+142,HEAD & SHOULDERS SS 180ML,Fresh quality product from Shampoo category.,199,Shampoo,,15
+143,HEAD & SHOULDERS AHF 180ML,Fresh quality product from Shampoo category.,199,Shampoo,,15
+144,GUARD RAZOR,Fresh quality product from Shaving category.,28,Shaving,,15
+145,VECTOR RZR,Fresh quality product from Shaving category.,105,Shaving,,15
+146,VECTOR 4S,Fresh quality product from Shaving category.,188,Shaving,,15
+147,VECTOR 2S,Fresh quality product from Shaving category.,99,Shaving,,15
+148,MACH 3 PRO(4S),Fresh quality product from Shaving category.,799,Shaving,,15
+149,MACH 3 (2S),Fresh quality product from Shaving category.,349,Shaving,,15
+150,ARIEL LIQUID 50G FL,Fresh quality product from Detergent category.,10,Detergent,,15
+151,ARIEL LIQUID 900G TL,Fresh quality product from Detergent category.,145,Detergent,,15
+152,ARIEL LIQUID 500G FL,Fresh quality product from Detergent category.,159,Detergent,,15
+153,WHISPER LINERS 20N,Fresh quality product from Santry Pad category.,175,Santry Pad,,15
+154,WHISPER LINERS 40N,Fresh quality product from Santry Pad category.,350,Santry Pad,,15
+155,WHISPER PERIOD PANTIES L-XL 6PCS,Fresh quality product from Santry Pad category.,325,Santry Pad,,15
+156,WHISPER ULREA XL 15PCS,Fresh quality product from Santry Pad category.,175,Santry Pad,,15
+157,WHISPER ULTRA XL 30PCS,Fresh quality product from Santry Pad category.,350,Santry Pad,,15
+158,WHISPER ULTRA XL+ 30PCS,Fresh quality product from Santry Pad category.,399,Santry Pad,,15
+159,WHISPER ULTRA XL+ 7PCS,Fresh quality product from Santry Pad category.,95,Santry Pad,,15
+160,WHISPER ULTRA XL+ 15PCS,Fresh quality product from Santry Pad category.,200,Santry Pad,,15
+161,WHISPER XL 6PCS,Fresh quality product from Santry Pad category.,65,Santry Pad,,15
+162,WHISPER CHOICE XL 6PCS,Fresh quality product from Santry Pad category.,45,Santry Pad,,15
+163,WHISPER CHOICE XL 18PCS,Fresh quality product from Santry Pad category.,125,Santry Pad,,15
+164,WHISPER CHOICE XL 12PCS,Fresh quality product from Santry Pad category.,80,Santry Pad,,15
+165,WHISPER ULTRA XL 6PCS,Fresh quality product from Santry Pad category.,50,Santry Pad,,15
+166,WHISPER ULTRA XL 20PCS,Fresh quality product from Santry Pad category.,160,Santry Pad,,15
+167,WHISPER ULTRA XL 10PCS,Fresh quality product from Santry Pad category.,70,Santry Pad,,15
+168,WHISPER REGULAE 6PCS,Fresh quality product from Santry Pad category.,40,Santry Pad,,15
+169,WHISPER WING REGULAE 20PCS,Fresh quality product from Santry Pad category.,115,Santry Pad,,15
+170,WHISPER XXL 6PCS,Fresh quality product from Santry Pad category.,55,Santry Pad,,15
+171,WHISPER XXL 16PCS,Fresh quality product from Santry Pad category.,150,Santry Pad,,15
+172,TIDE 500G,Fresh quality product from Detergent category.,70,Detergent,,15
+173,TIDE 1KG,Fresh quality product from Detergent category.,140,Detergent,,15
+174,ARIEL 500G,Fresh quality product from Detergent category.,90,Detergent,,15
+175,PAMPERS XL 6PCS,Fresh quality product from Diaper category.,117,Diaper,,15
+176,PAMPERS S 10PCS,Fresh quality product from Diaper category.,93,Diaper,,15
+177,PAMPERS NB 10PCS,Fresh quality product from Diaper category.,93,Diaper,,15
+178,PAMPERS M 8PCS,Fresh quality product from Diaper category.,98,Diaper,,15
+179,PAMPERS L 7PCS,Fresh quality product from Diaper category.,98,Diaper,,15
+180,PAMPERS XL 2PCS,Fresh quality product from Diaper category.,35,Diaper,,15
+181,PAMPERS S 2PCS,Fresh quality product from Diaper category.,18,Diaper,,15
+182,PAMPERS NB 2PCS,Fresh quality product from Diaper category.,18,Diaper,,15
+183,PAMPERS M 2PCS,Fresh quality product from Diaper category.,23,Diaper,,15
+184,PAMPERS L 2PCS,Fresh quality product from Diaper category.,30,Diaper,,15
+185,MAAZA 10RS,Fresh quality product from Cold Drinks category.,10,Cold Drinks,,15
+186,FANTA 100RS,Fresh quality product from Cold Drinks category.,100,Cold Drinks,fanta.jpg,15
+187,SPRITE 100RS,Fresh quality product from Cold Drinks category.,100,Cold Drinks,sprite.jpg,15
+188,FANTA 50RS,Fresh quality product from Cold Drinks category.,50,Cold Drinks,fanta.jpg,15
+189,SPRITE 50RS,Fresh quality product from Cold Drinks category.,50,Cold Drinks,sprite.jpg,15
+190,MAAZA 50RS,Fresh quality product from Cold Drinks category.,50,Cold Drinks,,15
+191,MAAZA 35RS,Fresh quality product from Cold Drinks category.,35,Cold Drinks,,15
+192,SPRITE 35RS,Fresh quality product from Cold Drinks category.,35,Cold Drinks,sprite.jpg,15
+193,THUMS UP 35RS,Fresh quality product from Cold Drinks category.,35,Cold Drinks,,15
+194,MOUNTAIN DEW 20RS,Fresh quality product from Cold Drinks category.,20,Cold Drinks,,15
+195,MAAZA 20RS,Fresh quality product from Cold Drinks category.,20,Cold Drinks,,15
+196,COCA COLA 20RS,Fresh quality product from Cold Drinks category.,20,Cold Drinks,coke.jpg,15
+197,FIZZ 20RS,Fresh quality product from Cold Drinks category.,20,Cold Drinks,,15
+198,FANTA 20RS,Fresh quality product from Cold Drinks category.,20,Cold Drinks,fanta.jpg,15
+199,SPRITE 20RS,Fresh quality product from Cold Drinks category.,20,Cold Drinks,sprite.jpg,15
+200,GORAS CHAAS,Fresh quality product from Amul category.,15,Amul,amul_chaas.webp,15
+201,AMUL DOODH GOLD,Fresh quality product from Amul category.,35,Amul,,15
+202,NYLON CHIVDA 250G,Fresh quality product from Gopal category.,50,Gopal,,15
+203,RAJWADI FARALI CHIVDA 250G,Fresh quality product from Gopal category.,50,Gopal,,15
+204,NYLON GATHIYA 250G,Fresh quality product from Gopal category.,50,Gopal,,15
+205,VANELA GATHIYA 250G,Fresh quality product from Gopal category.,50,Gopal,,15
+206,GOPAL TIKHA MITHA MIX 250G,Fresh quality product from Gopal category.,50,Gopal,,15
+207,SEV 250G,Fresh quality product from Gopal category.,50,Gopal,,15
+208,MASALA PONGA,Fresh quality product from Gopal category.,5,Gopal,,15
+209,STICKS,Fresh quality product from Gopal category.,5,Gopal,,15
+210,PIZZA PASTA,Fresh quality product from Gopal category.,5,Gopal,,15
+211,CHOWKADI,Fresh quality product from Gopal category.,5,Gopal,,15
+212,MASALA CUP,Fresh quality product from Gopal category.,5,Gopal,,15
+213,THUMPS UP(20RS),Fresh quality product from Cold Drinks category.,20,Cold Drinks,,15
+214,BISLRI BOTTLE,Fresh quality product from Cold Drinks category.,20,Cold Drinks,,15
+215,KINLEY STRONG SODA,Fresh quality product from Cold Drinks category.,20,Cold Drinks,,15
+216,RED BULL,Fresh quality product from Cold Drinks category.,125,Cold Drinks,red_bull.jpg,15
+217,NESCAFE SUNRISE(50G),Fresh quality product from Nestle category.,175,Nestle,,15
+218,NESCAFE CLASSIC(10RS),Fresh quality product from Nestle category.,10,Nestle,amul_lassi.jpg,15
+219,NESCAFFE CLASSIC(45G),Fresh quality product from Nestle category.,230,Nestle,amul_lassi.jpg,15
+220,NESCAFE SUNRISE(10RS),Fresh quality product from Nestle category.,10,Nestle,,15
+221,MAGGIE PASTA MASALA(96.5G),Fresh quality product from Nestle category.,35,Nestle,,15
+222,MAGGIE PASTA CHEESY(75G),Fresh quality product from Nestle category.,35,Nestle,,15
+223,MAGGIE MAGIC MASALA(6G),Fresh quality product from Nestle category.,5,Nestle,,15
+224,MAGGIE(95G),Fresh quality product from Nestle category.,20,Nestle,,15
+225,MAGGIE(150G),Fresh quality product from Nestle category.,30,Nestle,,15
+226,MAGGIE(600G),Fresh quality product from Nestle category.,116,Nestle,,15
+227,AATA MAGGIE(72.5G),Fresh quality product from Nestle category.,30,Nestle,,15
+228,AATA MAGGIE(290G),Fresh quality product from Nestle category.,108,Nestle,,15
+229,MAGGIE(300G),Fresh quality product from Nestle category.,58,Nestle,,15
+230,MAGGIE(450G),Fresh quality product from Nestle category.,87,Nestle,,15
+231,KIT KAT(50RS),Fresh quality product from Chocolates category.,50,Chocolates,,15
+232,KIT KAT(30RS),Fresh quality product from Chocolates category.,30,Chocolates,,15
+233,KIT KAT(10RS),Fresh quality product from Chocolates category.,10,Chocolates,,15
+234,DARK FANTASY(69G),Fresh quality product from Biscuits category.,35,Biscuits,fanta.jpg,15
+235,DARK FANTASY(230G),Fresh quality product from Biscuits category.,130,Biscuits,fanta.jpg,15
+236,UTTAM RAVA (500G),Fresh quality product from Groceries category.,32,Groceries,,15
+237,UTTAM SOOJI(500G),Fresh quality product from Groceries category.,32,Groceries,,15
+238,UTTAM MAIDA(500G),Fresh quality product from Groceries category.,30,Groceries,,15
+239,GAAY CHAAP BESAN(500G),Fresh quality product from Groceries category.,55,Groceries,,15
+240,AASHIRWAD AATA(5KG),Fresh quality product from Groceries category.,280,Groceries,,15
+241,AASHIRWAD AATA(2KG),Fresh quality product from Groceries category.,114,Groceries,,15
+242,TATA NAMAK(1KG),Fresh quality product from Groceries category.,30,Groceries,,15
+243,WAGH BAKRI TEA(500G),Fresh quality product from Tea category.,290,Tea,,15
+244,WAGH BAKRI TEA(250G),Fresh quality product from Tea category.,145,Tea,,15
+245,MADHRUM KHAND 1KG,Fresh quality product from Groceries category.,65,Groceries,,15
+246,MADHURAM KHAND 5KG,Fresh quality product from Groceries category.,310,Groceries,,15
+247,ITALIAN PASTA,Fresh quality product from Groceries category.,80,Groceries,,15
+248,PATEL GOD,Fresh quality product from Groceries category.,90,Groceries,,15
+249,PATEL MAMRA,Fresh quality product from Groceries category.,50,Groceries,,15
+250,PATEL POOHA,Fresh quality product from Groceries category.,35,Groceries,,15
+251,KKRUNCH CHOCO VANILLA,Fresh quality product from Havmor category.,60,Havmor,,15
+252,KKRUNCH CHOCO BERRY,Fresh quality product from Havmor category.,60,Havmor,,15
+253,SITAFAL TUB,Fresh quality product from Havmor category.,220,Havmor,,15
+254,SHARK ICE,Fresh quality product from Havmor category.,20,Havmor,,15
+255,SUBAK(WATERMELON),Fresh quality product from Havmor category.,20,Havmor,,15
+256,BISCOTTI TUB,Fresh quality product from Havmor category.,320,Havmor,,15
+257,GUAVA CHILLI,Fresh quality product from Havmor category.,250,Havmor,,15
+258,ENERGETIC MOOG DAL 500GM,Fresh quality product from Energetic category.,80,Energetic,,15
+259,ENERGETIC KABULI CHANA 500GM,Fresh quality product from Energetic category.,75,Energetic,,15
+260,ENERGETIC DESI CHANA 500GM,Fresh quality product from Energetic category.,70,Energetic,,15
+261,ENERGETIC MAAG 500GM,Fresh quality product from Energetic category.,75,Energetic,,15
+262,ODONIL (COMBO),Fresh quality product from Odonil category.,210,Odonil,,15
+263,OREGANO(40G),Fresh quality product from Other category.,60,Other,,15
+264,CHILLI FLEX(40G),Fresh quality product from Other category.,60,Other,,15
+265,LIVON(45ML),Fresh quality product from Hair Serum category.,140,Hair Serum,,15
+266,TOUNGE CLEANER,Fresh quality product from Other category.,35,Other,,15
+267,SCHEZWAN CHUTNEY(250G),Fresh quality product from Ketchup category.,90,Ketchup,,15
+268,SCISSOR,Fresh quality product from Other category.,30,Other,,15
+269,DIE BRUSH,Fresh quality product from Other category.,20,Other,,15
+270,NAILCUTTER,Fresh quality product from Other category.,40,Other,,15
+271,NAVRATNA COOL TALC(100G),Fresh quality product from Powder category.,110,Powder,,15
+272,ODONIL SPRAY(120ML),Fresh quality product from Odonil category.,150,Odonil,,15
+273,ODONIL(24G)LAVENDER MEADOWS,Fresh quality product from Odonil category.,25,Odonil,,15
+274,ODONIL(24G)-JASMINE,Fresh quality product from Odonil category.,25,Odonil,,15
+275,IODEX(8G),Fresh quality product from Balm category.,48,Balm,,15
+276,NIVEA WOMEN PEARL AND BEAUTY,Fresh quality product from Body Spray category.,245,Body Spray,,15
+277,NIVEA MEN DEEP IMPACT 72H,Fresh quality product from Body Spray category.,249,Body Spray,,15
+278,NIVEA MEN FRESH ACTIVE 72H,Fresh quality product from Body Spray category.,245,Body Spray,,15
+279,CHAMELI MATCHES,Fresh quality product from Match Box category.,20,Match Box,,15
+280,HIMALAYA NEEM(50ML),Fresh quality product from Face Wash category.,90,Face Wash,,15
+281,PONDS(CHARCOAL) - 50G,Fresh quality product from Face Wash category.,130,Face Wash,,15
+282,GARNIER ACNE FIGHT(50G),Fresh quality product from Face Wash category.,115,Face Wash,,15
+283,GARNIER OIL AND CLEAR(50G),Fresh quality product from Face Wash category.,130,Face Wash,,15
+284,DETTOL HANDWASH ORIGINAL,Fresh quality product from Hand Wash category.,99,Hand Wash,,15
+285,DETTOL HANDWASH COMBO,Fresh quality product from Hand Wash category.,99,Hand Wash,,15
+286,DABUR HONEY(300G),Fresh quality product from Honey category.,125,Honey,,15
+287,DABUR HONEY(100G),Fresh quality product from Honey category.,70,Honey,,15
+288,NEPTHALINE BALLS,Fresh quality product from Detergent category.,40,Detergent,,15
+289,DR.FLOW,Fresh quality product from Detergent category.,25,Detergent,,15
+290,LIZOL(CITRUS),Fresh quality product from Detergent category.,129,Detergent,,15
+291,HARPIC(500ML),Fresh quality product from Detergent category.,110,Detergent,,15
+292,HARPIC(200ML),Fresh quality product from Detergent category.,45,Detergent,,15
+293,RED HIT,Fresh quality product from Good Knight category.,105,Good Knight,,15
+294,BLACK HIT,Fresh quality product from Good Knight category.,120,Good Knight,,15
+295,GOOD KNIGHT REFILL,Fresh quality product from Good Knight category.,85,Good Knight,,15
+296,GOOD KNIGHT COMBO,Fresh quality product from Good Knight category.,110,Good Knight,,15
+297,STREAX VITARCHE GLOSS,Fresh quality product from Hair Serum category.,144,Hair Serum,,15
+298,STREAX WALNUT OIL,Fresh quality product from Hair Serum category.,130,Hair Serum,,15
+299,DENVER,Fresh quality product from Body Spray category.,210,Body Spray,,15
+300,DENVER GOAT,Fresh quality product from Body Spray category.,210,Body Spray,,15
+301,DENVER CALIBER,Fresh quality product from Body Spray category.,210,Body Spray,,15
+302,DENVER HONOUR,Fresh quality product from Body Spray category.,210,Body Spray,,15
+303,DENVER ORIGINAL BLACK CODE,Fresh quality product from Body Spray category.,210,Body Spray,,15
+304,DENVER PRIDE,Fresh quality product from Body Spray category.,210,Body Spray,,15
+305,KS SPRAY SPARK,Fresh quality product from Body Spray category.,230,Body Spray,,15
+306,FOGG PARADISE,Fresh quality product from Body Spray category.,200,Body Spray,,15
+307,FOGG MONARCH,Fresh quality product from Body Spray category.,200,Body Spray,,15
+308,FOGG MAJESTIC,Fresh quality product from Body Spray category.,200,Body Spray,,15
+309,FOGG IMPERIAL,Fresh quality product from Body Spray category.,200,Body Spray,,15
+310,FOGG NAPOLEAN,Fresh quality product from Milk Powder category.,200,Milk Powder,,15
+311,FOGG MARCO,Fresh quality product from Body Spray category.,200,Body Spray,,15
+312,FOGG VICTOR,Fresh quality product from Body Spray category.,200,Body Spray,,15
+313,FOGG ROYALE,Fresh quality product from Body Spray category.,200,Body Spray,,15
+314,FOGG NUE INTENSE COLONGE,Fresh quality product from Body Spray category.,230,Body Spray,,15
+315,FOGG NUE FRESH CITRUS,Fresh quality product from Body Spray category.,230,Body Spray,,15
+316,FOGG NUE SUPER WOOD,Fresh quality product from Body Spray category.,230,Body Spray,,15
+317,FOGG NUE FINE AMBER,Fresh quality product from Body Spray category.,230,Body Spray,,15
+318,FOGG NUE SMOOTH FOUGERE,Fresh quality product from Body Spray category.,230,Body Spray,,15
+319,FOGG NUE BOLD FOUGERE,Fresh quality product from Body Spray category.,230,Body Spray,,15
+320,FOGG NUE SOLID ORIENTAL,Fresh quality product from Body Spray category.,230,Body Spray,,15
+321,FOGG NEU COOL ORIENTAL,Fresh quality product from Body Spray category.,230,Body Spray,,15
+322,FOGG MASTER VOYAGER,Fresh quality product from Body Spray category.,230,Body Spray,,15
+323,FOGG MASTER AGAR,Fresh quality product from Body Spray category.,230,Body Spray,,15
+324,FOGG MASTER CEDAR,Fresh quality product from Body Spray category.,230,Body Spray,,15
+325,FOGG MASTER PINE,Fresh quality product from Body Spray category.,230,Body Spray,,15
+326,FOGG MASTRE OAK,Fresh quality product from Body Spray category.,230,Body Spray,,15
+327,FOGG MASTER NAPOLEAN,Fresh quality product from Body Spray category.,230,Body Spray,,15
+328,HAVABANDH HARDE(100G),Fresh quality product from Other category.,100,Other,,15
+329,DABUR AMLA(223ML),Fresh quality product from Hair Oil category.,90,Hair Oil,,15
+330,DABUR AMLA(136ML),Fresh quality product from Hair Oil category.,50,Hair Oil,,15
+331,PARACHUTE(175ML),Fresh quality product from Hair Oil category.,120,Hair Oil,,15
+332,PARACHUTE(100ML),Fresh quality product from Hair Oil category.,68,Hair Oil,,15
+333,NAVRATNA(90ML),Fresh quality product from Hair Oil category.,89,Hair Oil,,15
+334,TRESSEME(KERATIN FILLERS) - 180,Fresh quality product from Shampoo category.,168,Shampoo,,15
+335,TRESSMEE(CERATINE+ARGON OIL) - 180,Fresh quality product from Shampoo category.,168,Shampoo,,15
+336,DOVE CONDITIONER(DAILY SHINE) - 75ML,Fresh quality product from Shampoo category.,117,Shampoo,,15
+337,DOVE CONDITIONER(DRYNESS CARE) - 75ML,Fresh quality product from Shampoo category.,117,Shampoo,,15
+338,DOVE CONDITIONER(HAIRFALL RESCUE) - 75ML,Fresh quality product from Shampoo category.,117,Shampoo,,15
+339,DOVE(HAIRFALL RESCUE) - 180ML,Fresh quality product from Shampoo category.,172,Shampoo,,15
+340,DOVE(INSTANT REPAIR) - 180ML,Fresh quality product from Shampoo category.,169,Shampoo,,15
+341,DOVE(DRYNESS CARE) - 180 ML,Fresh quality product from Shampoo category.,172,Shampoo,,15
+342,DOVE(DAILY SHINE) - 75ML,Fresh quality product from Shampoo category.,58,Shampoo,,15
+343,DOVE(HAIRFALL RESCUE) - 75ML,Fresh quality product from Shampoo category.,60,Shampoo,,15
+344,DOVE(DRYNESS CARE) - 75ML,Fresh quality product from Shampoo category.,60,Shampoo,,15
+345,CLINIC PLUS(SMOOTH AND LONG) - 175ML,Fresh quality product from Shampoo category.,138,Shampoo,,15
+346,CLINIC PLUS(SMOOTH AND LONG) - 80ML,Fresh quality product from Shampoo category.,74,Shampoo,,15
+347,SANTOOR(SANDAL),Fresh quality product from Soap category.,25,Soap,,15
+348,DETTOL(COOL),Fresh quality product from Soap category.,35,Soap,,15
+349,DETTOL(ORIGINALS),Fresh quality product from Soap category.,35,Soap,,15
+350,LUX ROSE(125),Fresh quality product from Soap category.,125,Soap,,15
+351,VEDSHAKTI,Fresh quality product from Toothpaste category.,345,Toothpaste,,15
+352,CLOSE UP(129),Fresh quality product from Toothpaste category.,127,Toothpaste,,15
+353,CLOSE UP,Fresh quality product from Toothpaste category.,55,Toothpaste,,15
+354,COLGATE(130),Fresh quality product from Toothpaste category.,128,Toothpaste,,15
+355,COLGATE MAX FRESH,Fresh quality product from Toothpaste category.,68,Toothpaste,,15
+356,COLGATE 100G,Fresh quality product from Toothpaste category.,68,Toothpaste,,15
+357,COLGATE MAX FRESH(20),Fresh quality product from Toothpaste category.,20,Toothpaste,,15
+358,COLGATE(20),Fresh quality product from Toothpaste category.,20,Toothpaste,,15
+359,GODREJ NATURAL BROWN 4.0,Fresh quality product from Cosmetics category.,40,Cosmetics,,15
+360,GODREJ NATURAL BLACK 1.0,Fresh quality product from Cosmetics category.,40,Cosmetics,,15
+361,GARNIER BURGANDY 3.16,Fresh quality product from Cosmetics category.,45,Cosmetics,,15
+362,GARNIER ORIGINAL BLACK 2.0,Fresh quality product from Cosmetics category.,45,Cosmetics,,15
+363,CHOCO BAKES COOKIES,Fresh quality product from Biscuits category.,30,Biscuits,cadbury_chocobakes.jpg,15
+364,TANG MANGO,Fresh quality product from Powdered Drink category.,26,Powdered Drink,,15
+365,TANG LEMON,Fresh quality product from Powdered Drink category.,26,Powdered Drink,,15
+366,TANG ORANGE,Fresh quality product from Powdered Drink category.,26,Powdered Drink,,15
+367,CADBURY FUSE,Fresh quality product from Chocolates category.,20,Chocolates,,15
+368,SILK BUBBLY,Fresh quality product from Chocolates category.,98,Chocolates,,15
+369,SILK OREO,Fresh quality product from Chocolates category.,98,Chocolates,,15
+370,PERK(10),Fresh quality product from Chocolates category.,10,Chocolates,,15
+371,PERK,Fresh quality product from Chocolates category.,5,Chocolates,,15
+372,CRISPELLO(BIG),Fresh quality product from Chocolates category.,40,Chocolates,,15
+373,CRISPELLO,Fresh quality product from Chocolates category.,10,Chocolates,,15
+374,FIVE STAR OREO,Fresh quality product from Chocolates category.,20,Chocolates,,15
+375,FIVE STAR 3D,Fresh quality product from Chocolates category.,20,Chocolates,,15
+376,FIVE STAR(10),Fresh quality product from Chocolates category.,10,Chocolates,,15
+377,DAIRY MILK(45),Fresh quality product from Chocolates category.,45,Chocolates,,15
+378,DAIRY MILK(20),Fresh quality product from Chocolates category.,20,Chocolates,,15
+379,DAIRY MILK,Fresh quality product from Chocolates category.,10,Chocolates,,15
+380,BOURNVITA(500G),Fresh quality product from Milk Powder category.,249,Milk Powder,,15
+381,BOURNVITA JAR(200G),Fresh quality product from Milk Powder category.,110,Milk Powder,,15
+382,BOURNVITA(70G),Fresh quality product from Milk Powder category.,26,Milk Powder,,15
+383,OREO CHOCO CREAM (MEDIUM),Fresh quality product from Biscuits category.,26,Biscuits,,15
+384,OREO CHOCO CREAM,Fresh quality product from Biscuits category.,10,Biscuits,,15
+385,GOLDEN OREO,Fresh quality product from Biscuits category.,10,Biscuits,,15
+386,OREO ORIGINAL(MEDIUM),Fresh quality product from Biscuits category.,26,Biscuits,,15
+387,OREO ORIGINALS,Fresh quality product from Biscuits category.,10,Biscuits,,15
+388,HIDE AND SEEK(JUMBO),Fresh quality product from Biscuits category.,134,Biscuits,hide_and_seek.jpg,15
+389,HIDE AND SEEK,Fresh quality product from Biscuits category.,30,Biscuits,hide_and_seek.jpg,15
+390,HAPPY HAPPY,Fresh quality product from Biscuits category.,10,Biscuits,appy_fizz.jpg,15
+391,20-20 BUTTER,Fresh quality product from Biscuits category.,10,Biscuits,amul_butter.jpg,15
+392,20-20 CASHEW,Fresh quality product from Biscuits category.,10,Biscuits,,15
+393,KRACKJACK,Fresh quality product from Biscuits category.,10,Biscuits,,15
+394,KRACKJACK(MEDIUM),Fresh quality product from Biscuits category.,35,Biscuits,,15
+395,KRACKJACK(JUMBO),Fresh quality product from Biscuits category.,70,Biscuits,,15
+396,MONACO(MEDIUM),Fresh quality product from Biscuits category.,35,Biscuits,,15
+397,MONACO,Fresh quality product from Biscuits category.,10,Biscuits,,15
+398,PARLE-G ROYAL,Fresh quality product from Biscuits category.,10,Biscuits,,15
+399,PARLE-G GOLD(JUMBO),Fresh quality product from Biscuits category.,160,Biscuits,,15
+400,PARLE-G GOLD(MEDIUM),Fresh quality product from Biscuits category.,30,Biscuits,,15
+401,PARLE-G GOLD,Fresh quality product from Biscuits category.,10,Biscuits,,15
+402,PARLE-G GLUCO(JUMBO),Fresh quality product from Biscuits category.,100,Biscuits,,15
+403,PARLE-G GLUCO,Fresh quality product from Biscuits category.,10,Biscuits,,15
+404,NAVKAR CASTOR OIL(0.910G),Fresh quality product from Oil category.,185,Oil,,15
+405,Vimal Cottonseed Oil Pouch(0.870G),Fresh quality product from Oil category.,175,Oil,,15
+406,Monster,Fresh quality product from Cold Drinks category.,125,Cold Drinks,monster_energy.jpg,15
+407,Amul Masti Buttermilk,Fresh quality product from Amul category.,15,Amul,amul_butter.jpg,15
+408,AMERICAN NUTS CUP,Fresh quality product from Havmor category.,30,Havmor,,15
+409,CHOCOLATE CHIPS CUP,Fresh quality product from Havmor category.,40,Havmor,,15
+410,RAJBHOG CUP,Fresh quality product from Havmor category.,50,Havmor,,15
+411,VANILLA CUP,Fresh quality product from Havmor category.,10,Havmor,,15
+412,BUTTER SCOTCH CUP,Fresh quality product from Havmor category.,20,Havmor,amul_butter.jpg,15
+413,KAJU DRAKSH CUP,Fresh quality product from Havmor category.,25,Havmor,,15
+414,SHAHI KULFI,Fresh quality product from Havmor category.,25,Havmor,,15
+415,RAJWADI KULFI,Fresh quality product from Havmor category.,20,Havmor,,15
+416,MATKA KULFI,Fresh quality product from Havmor category.,65,Havmor,,15
+417,CHOCOLATE CONE,Fresh quality product from Havmor category.,40,Havmor,,15
+418,HAVMOR CONE,Fresh quality product from Havmor category.,20,Havmor,,15
+419,ORANGE BAR,Fresh quality product from Havmor category.,10,Havmor,,15
+420,KACHHA AAM CANDY,Fresh quality product from Havmor category.,10,Havmor,,15
+421,JUMBO RASPBERRY DOLLY,Fresh quality product from Havmor category.,20,Havmor,,15
+422,JUMBO MANGO DOLLY,Fresh quality product from Havmor category.,20,Havmor,,15
+423,JUMBO CLASSIC CHOCOBAR,Fresh quality product from Havmor category.,20,Havmor,amul_lassi.jpg,15
+424,ZULUBAR,Fresh quality product from Havmor category.,50,Havmor,,15
+425,CHOCO BROWNIE CONE,Fresh quality product from Havmor category.,45,Havmor,,15
+426,CHOWPATTY KULFI,Fresh quality product from Havmor category.,40,Havmor,,15
+427,ZULUBAR DARK CRUNCH,Fresh quality product from Havmor category.,50,Havmor,,15
+428,WILD BERRIES BAR,Fresh quality product from Havmor category.,60,Havmor,,15
+429,TRIPLE CHOCOLATE BAR,Fresh quality product from Havmor category.,70,Havmor,,15
+430,CHOCOLATE CAKE,Fresh quality product from Havmor category.,340,Havmor,,15
+431,ITALIAN CASSATA CAKE,Fresh quality product from Havmor category.,320,Havmor,,15
+432,VANILLA FAMILY PACK,Fresh quality product from Havmor category.,120,Havmor,,15
+433,STRAWBERRY FAMILY PACK,Fresh quality product from Havmor category.,120,Havmor,,15
+434,BUTTER SCOTCH FAMILY PACK,Fresh quality product from Havmor category.,130,Havmor,amul_butter.jpg,15
+435,COOKIE CREAM FAMILY PACK,Fresh quality product from Havmor category.,150,Havmor,cadbury_chocobakes.jpg,15
+436,ALPHONSO MANGO FAMILY PACK,Fresh quality product from Havmor category.,150,Havmor,,15
+437,KAJU DRAKSH FAMILY PACK,Fresh quality product from Havmor category.,150,Havmor,,15
+438,CHOCO BROWNIE FAMILY PACK,Fresh quality product from Havmor category.,170,Havmor,,15
+439,CHOCOLATE CHIPS FAMILY PACK,Fresh quality product from Havmor category.,160,Havmor,,15
+440,AMERICAN NUTS FAMILY PACK,Fresh quality product from Havmor category.,165,Havmor,,15
+441,KESAR PISTA FAMILY PACK,Fresh quality product from Havmor category.,180,Havmor,,15
+442,RAJBHOG FAMILY PACK,Fresh quality product from Havmor category.,195,Havmor,,15
+443,ANKUR COTTONSEED OIL (4.350 L),Fresh quality product from Oil category.,855.23,Oil,,15
+444,ANKUR COTTONSEED OIL (0.870 Grm),Fresh quality product from Oil category.,180,Oil,,15
+445,ANKUR GROUNDNUT OIL (0.870Grm),Fresh quality product from Oil category.,200,Oil,,15
+446,ANKUR GROUNDNUT OIL (0.435 Grm),Fresh quality product from Oil category.,132,Oil,,15
+447,VIMAL Ref. COTTONSEED OIL (4.350 Ltr),Fresh quality product from Oil category.,820,Oil,,15
+448,VIMAL Ref. COTTONSEED OIL (0.435 ML),Fresh quality product from Oil category.,105,Oil,,15
+449,Shrikhand Mango 500gm,Fresh quality product from Shrikhand category.,125,Shrikhand,amul_shrikhand.jpg,15
+450,Shrikhand Elachi 500gm,Fresh quality product from Shrikhand category.,125,Shrikhand,amul_shrikhand.jpg,15
+451,Shrikhand Rajbhog 500g,Fresh quality product from Shrikhand category.,140,Shrikhand,amul_shrikhand.jpg,15
+452,Shrikhand Butterscotch 500g,Fresh quality product from Shrikhand category.,130,Shrikhand,amul_butter.jpg,15
+453,Rose Lassi 200ml,Fresh quality product from Lassi category.,25,Lassi,amul_lassi.jpg,15
+454,Masti Dahi Cup 200g Cart,Fresh quality product from Dahi category.,25,Dahi,amul_masti_dahi.jpg,15
+455,Masti Dahi Bucket 1kg,Fresh quality product from Dahi category.,105,Dahi,amul_masti_dahi.jpg,15
+456,Mango Lassi 200ml,Fresh quality product from Lassi category.,22,Lassi,amul_lassi.jpg,15
+457,Lassi 250ml,Fresh quality product from Lassi category.,25,Lassi,amul_lassi.jpg,15
+458,Kool Rose 180ml,Fresh quality product from Milk drinks category.,25,Milk drinks,,15
+459,Kool Kesar 180ml,Fresh quality product from Milk drinks category.,25,Milk drinks,,15
+460,RUMBLES WAFERS(JUMBO),Fresh quality product from Snakes category.,40,Snakes,,15
+461,INSTANT BHEL MIX(JUMBO),Fresh quality product from Snakes category.,35,Snakes,,15
+462,MASALA SEV MURMURA(JUMBO),Fresh quality product from Snakes category.,40,Snakes,,15
+463,240GM SEV MURMURA [NEW],Fresh quality product from Snakes category.,40,Snakes,,15
+464,300GM GATHIYA,Fresh quality product from Snakes category.,55,Snakes,,15
+465,200GM ALOO SEV,Fresh quality product from Snakes category.,40,Snakes,,15
+466,235GM TIKHA MITHA MIX,Fresh quality product from Snakes category.,40,Snakes,,15
+467,200GM RATLAMI SEV,Fresh quality product from Snakes category.,40,Snakes,,15
+468,200GM SHING BHUJIA,Fresh quality product from Snakes category.,40,Snakes,haldiram_bhujia.jpg,15
+469,230GM CHANADAL,Fresh quality product from Snakes category.,45,Snakes,,15
+470,235GM FARALI CHEVDO,Fresh quality product from Snakes category.,45,Snakes,,15
+471,AMAIZE FLAMIN' HOT NACHOS,Fresh quality product from Snakes category.,30,Snakes,,15
+472,CRUNCHEM CHAAT CHASKA WAFERS(JUMBO),Fresh quality product from Snakes category.,40,Snakes,,15
+473,CRUNCHEX CHILI TADKA WAFERS,Fresh quality product from Snakes category.,40,Snakes,,15
+474,CRUNCHEM CREAM & ONION WAFERS,Fresh quality product from Snakes category.,40,Snakes,,15
+475,CRUNCHEM MASALA MASTI WAFERS,Fresh quality product from Snakes category.,40,Snakes,,15
+476,GIPPI TORNADO FLAMIN CHILLI,Fresh quality product from Snakes category.,10,Snakes,,15
+477,PUNJABI TADKA,Fresh quality product from Snakes category.,10,Snakes,,15
+478,CHANA JOR GARAM,Fresh quality product from Snakes category.,10,Snakes,,15
+479,KHATTA MITHA MIX,Fresh quality product from Snakes category.,10,Snakes,,15
+480,GATHIYA,Fresh quality product from Snakes category.,10,Snakes,,15
+481,ALOO SEV,Fresh quality product from Snakes category.,10,Snakes,,15
+482,TIKHA MITHA MIX,Fresh quality product from Snakes category.,10,Snakes,,15
+483,RATLAMI SEV,Fresh quality product from Snakes category.,10,Snakes,,15
+484,SHING BHUJIA,Fresh quality product from Snakes category.,10,Snakes,haldiram_bhujia.jpg,15
+485,MUNGDAL,Fresh quality product from Snakes category.,10,Snakes,,15
+486,CHANADAL,Fresh quality product from Snakes category.,10,Snakes,,15
+487,FARALI CHEVDO,Fresh quality product from Snakes category.,10,Snakes,,15
+488,WHEELOS MASALA,Fresh quality product from Snakes category.,10,Snakes,,15
+489,BHEL MIX,Fresh quality product from Snakes category.,10,Snakes,,15
+490,MASALA SEV MURMURA,Fresh quality product from Snakes category.,10,Snakes,,15
+491,SEV MURMURA,Fresh quality product from Snakes category.,10,Snakes,,15
+492,CHATAKA PATAKA TANGY TOMATO,Fresh quality product from Snakes category.,10,Snakes,,15
+493,CHATAKA PATAKA MASALA MASTI,Fresh quality product from Snakes category.,10,Snakes,,15
+494,BANANA MAST MARI WAFERS,Fresh quality product from Snakes category.,10,Snakes,,15
+495,CHEESE CHILLI NACHOS,Fresh quality product from Snakes category.,10,Snakes,amul_cheese.jpg,15
+496,CRUNCHEX CHILLI TOMATO WAFERS,Fresh quality product from Snakes category.,10,Snakes,,15
+497,RUMBLES PUDINA TWIST WAFERS,Fresh quality product from Snakes category.,10,Snakes,,15
+498,CREAM &ONION WAFERS,Fresh quality product from Snakes category.,10,Snakes,,15
+499,CRUNCHEM CHAAT CHASKA WAFERS,Fresh quality product from Snakes category.,10,Snakes,,15
+500,TOMATO WAFERS,Fresh quality product from Snakes category.,10,Snakes,,15
+501,CRUNCHEM SALTED WAFERS,Fresh quality product from Snakes category.,10,Snakes,,15
+502,Kool Badam,Fresh quality product from Milk drinks category.,25,Milk drinks,,15
+503,Amul Processed Cheese(Box),Fresh quality product from Cheese category.,600,Cheese,amul_cheese.jpg,15
+504,Amul Processed Cheese Block(200)Grm,Fresh quality product from Cheese category.,129,Cheese,amul_cheese.jpg,15
+505,Amul Processed Cheese Block 500g,Fresh quality product from Cheese category.,295,Cheese,amul_cheese.jpg,15
+506,Amul Ghee Sachet(500),Fresh quality product from Ghee category.,305,Ghee,amul_pure_ghee.jpg,15
+507,Amul Butter Tub(200),Fresh quality product from Butter category.,116,Butter,amul_butter.jpg,15
+508,Amul Butter (100g),Fresh quality product from Butter category.,60,Butter,amul_butter.jpg,15
+509,Amrakhand 200g,Fresh quality product from Shrikhand category.,60,Shrikhand,,15
+510,ENERGETIC CHANA DAL 500GM,Fresh quality product from Energetic category.,62,Energetic,,15
+511,ENERGETIC MOONGFADA 500GM,Fresh quality product from Energetic category.,75,Energetic,,15
+512,ENERGETIC URAD DAL 500GM,Fresh quality product from Energetic category.,68,Energetic,,15
+513,ENERGETIC MASOOR DAL 500GM,Fresh quality product from Energetic category.,65,Energetic,,15
+514,ENERGETIC TOOR DAL 500GM,Fresh quality product from Energetic category.,74,Energetic,,15
