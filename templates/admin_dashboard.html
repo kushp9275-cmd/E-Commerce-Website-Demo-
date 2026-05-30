@@ -79,8 +79,13 @@
                 <tr>
                     <td>MT-{{ "%03d"|format(loop.index) }}</td>
                     <td>
+                        {% if item.image_url %}
                         <img src="{{ item.image_url if item.image_url.startswith('http') else url_for('static', filename='uploads/' + item.image_url) }}" alt="..." width="50" height="50" style="object-fit:cover; border-radius: 8px;" onerror="this.onerror=null; this.src='https://placehold.co/50x50/e2e8f0/475569?text=IMG';">
+                        {% else %}
+                        <div style="width: 50px; height: 50px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--text-muted);">No Image</div>
+                        {% endif %}
                     </td>
+
                     <td>{{ item.name }}</td>
                     <td><span class="category-badge">{{ item.category }}</span></td>
                     <td>₹{{ "%.2f"|format(item.price) }}</td>
