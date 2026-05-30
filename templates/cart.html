@@ -37,7 +37,12 @@
                 <div class="cart-items-list">
                     {% for item in cart_items %}
                     <div class="cart-item">
+                        {% if item.image_url %}
                         <img src="{{ item.image_url if item.image_url.startswith('http') else url_for('static', filename='uploads/' + item.image_url) }}" alt="{{ item.name }}" class="cart-item-img">
+                        {% else %}
+                        <div class="cart-item-img-empty" style="width: 90px; height: 90px; border-radius: var(--radius-sm); background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted);">No Image</div>
+                        {% endif %}
+
                         <div class="cart-item-details">
                             <span class="product-id" style="font-size: 0.7rem; color: var(--primary-color); font-weight: 600;">MT-{{ "%03d"|format(item.item_id) }}</span>
                             <h3>{{ item.name }}</h3>
