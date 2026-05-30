@@ -100,7 +100,12 @@
                         {% elif item.stock < 5 %}
                         <span class="stock-badge stock-low">Only {{ item.stock }} left</span>
                         {% endif %}
+                        {% if item.image_url %}
                         <img src="{{ item.image_url if item.image_url.startswith('http') else url_for('static', filename='uploads/' + item.image_url) }}" alt="{{ item.name }}" class="product-img" onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e293b/6366f1?text=' + encodeURIComponent('{{ item.name }}');">
+                        {% else %}
+                        <div class="product-img-empty" style="width: 100%; height: 100%; background: var(--surface2);"></div>
+                        {% endif %}
+
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">
