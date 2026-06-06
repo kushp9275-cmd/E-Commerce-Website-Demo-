@@ -225,9 +225,14 @@ def checkout_cart(payment_method: str = "cod") -> str:
     if not user_id:
         return "Error: You must be logged in to checkout."
         
+    # Normalize payment method
     method = payment_method.lower().strip()
-    if method not in ['cod', 'online']:
-        return "Error: Invalid payment method. Must be 'cod' or 'online'."
+    if 'cod' in method or 'cash' in method:
+        method = 'cod'
+    elif 'online' in method or 'pay' in method or 'card' in method:
+        method = 'online'
+    else:
+        return "Error: Invalid payment method. Must be 'cod' (Cash on Delivery) or 'online' (Online Payment)."
         
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -236,6 +241,11 @@ def checkout_cart(payment_method: str = "cod") -> str:
     cursor.execute("SELECT address FROM users WHERE id = ?", (user_id,))
     user_row = cursor.fetchone()
     delivery_address = user_row['address'] if user_row else ''
+    
+    if not delivery_address or not delivery_address.strip():
+        cursor.close()
+        conn.close()
+        return "Error: You do not have a delivery address set in your profile. Please set your delivery address first (e.g. by saying 'update my address to [address]')."
     
     # 2. Fetch cart items
     query = """
