@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Divisions - Admin Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">Admin Portal</div>
+        <div class="nav-links">
+            <a href="{{ url_for('admin_dashboard') }}" class="welcome-text">Inventory</a>
+            <a href="{{ url_for('admin_orders') }}" class="welcome-text">Orders</a>
+            <a href="{{ url_for('profile') }}" class="welcome-text">{{ session.username }}</a>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages dashboard-flash">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+    </div>
+
+    <!-- Main Container -->
+    <main class="dashboard-main" style="display: block; max-width: 800px; margin: 2rem auto;">
+        <div class="admin-container" style="padding: 2rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);">
+            
+            <div class="header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="margin: 0;">Store Divisions (Categories)</h2>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    🏠 Back to Inventory
+                </a>
+            </div>
+
+            <!-- Table of Divisions -->
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Division Name</th>
+                        <th>Associated Products</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for div in divisions %}
+                    <tr>
+                        <td style="font-weight: 600; font-size: 1.05rem;">
+                            {{ div.category }}
+                        </td>
+                        <td>
+                            <span class="category-badge" style="background: rgba(124, 58, 237, 0.1); color: var(--accent); padding: 0.35rem 0.65rem; border-radius: 50px;">
+                                {{ div.product_count }} items
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <button class="btn-edit" onclick="openRenameModal('{{ div.category|replace('\'', '\\\'') }}')">
+                                ✏️ Rename
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Rename Modal -->
+    <div id="renameModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Rename Division</h2>
+            <form id="renameForm" action="{{ url_for('rename_category') }}" method="POST">
+                <input type="hidden" name="old_category" id="old_category_input">
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Current Name</label>
+                    <input type="text" id="display_old_category" disabled style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(0, 0, 0, 0.05); font-weight: 500;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">New Division Name</label>
+                    <input type="text" name="new_category" placeholder="e.g. Beverages" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text-color);">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openRenameModal(catName) {
+            document.getElementById('old_category_input').value = catName;
+            document.getElementById('display_old_category').value = catName;
+            document.getElementById('renameModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('renameModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('renameModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Flash message closer
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.flash');
+            messages.forEach(msg => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 3000);
+    </script>
+</body>
+</html>

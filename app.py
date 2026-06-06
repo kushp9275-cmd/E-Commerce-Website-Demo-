@@ -1045,6 +1045,29 @@ def delete_item(item_id):
     flash("Item deleted successfully!", "success")
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/admin/divisions')
+def admin_divisions():
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        flash("Access Denied. Admins only.", "error")
+        return redirect(url_for('home'))
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Get user profile pic
+    cursor.execute("SELECT profile_pic FROM users WHERE id = ?", (session['user_id'],))
+    user_data = cursor.fetchone()
+    profile_pic = user_data['profile_pic'] if user_data and user_data['profile_pic'] else 'default_dp.png'
+    
+    # Get divisions (categories) and associated item counts
+    cursor.execute("SELECT category, COUNT(*) as product_count FROM items GROUP BY category ORDER BY category")
+    divisions = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    return render_template('admin_divisions.html', divisions=divisions, profile_pic=profile_pic)
+
 @app.route('/admin/category/rename', methods=['POST'])
 def rename_category():
     if 'user_id' not in session or session.get('role') != 'Admin':
@@ -1055,7 +1078,7 @@ def rename_category():
 
     if not old_category or not new_category:
         flash("Category names cannot be empty.", "error")
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin_divisions'))
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -1065,7 +1088,7 @@ def rename_category():
     conn.close()
 
     flash(f"Category '{old_category}' successfully renamed to '{new_category}'!", "success")
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('admin_divisions'))
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
