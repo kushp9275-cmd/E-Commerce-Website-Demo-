@@ -317,3 +317,68 @@ def create_database_and_table(db_path='mart.db'):
 
 if __name__ == '__main__':
     create_database_and_table()
+
+
+def sync_db_to_csv(db_path=None):
+    """
+    Exports the current items in the SQLite database back to the items_MAA_Mini_mart.csv
+    and item-categories_MAA_Mini_mart.csv files. This keeps the CSV source files
+    synchronized with any edits, additions, or deletions made through the website.
+    """
+    import csv
+    if not db_path:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(base_dir, 'mart.db')
+        
+    items_csv_path = os.path.join(os.path.dirname(db_path), 'items_MAA_Mini_mart.csv')
+    categories_csv_path = os.path.join(os.path.dirname(db_path), 'item-categories_MAA_Mini_mart.csv')
+    
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # 1. Export items
+    cursor.execute("SELECT id, name, description, price, category, image_url, stock FROM items ORDER BY id")
+    items = cursor.fetchall()
+    
+    try:
+        with open(items_csv_path, mode='w', encoding='utf-8-sig', newline='') as f:
+            writer = csv.writer(f)
+            # Match the exact headers of items_MAA_Mini_mart.csv
+            writer.writerow(['Item ID', 'Item Name', 'Description', 'Sales Rate', 'Category Name', 'image_url', 'Available Stock'])
+            for item in items:
+                price_val = item['price']
+                # Format price safely
+                if isinstance(price_val, float) and price_val.is_integer():
+                    price_val = int(price_val)
+                writer.writerow([
+                    item['id'],
+                    item['name'],
+                    item['description'],
+                    price_val,
+                    item['category'],
+                    item['image_url'] or '',
+                    item['stock']
+                ])
+        print(f"Successfully synced database items to CSV: {len(items)} items written.")
+    except Exception as e:
+        print(f"Error syncing items to CSV: {e}")
+        
+    # 2. Export categories
+    cursor.execute("SELECT DISTINCT category FROM items ORDER BY category")
+    categories = cursor.fetchall()
+    
+    try:
+        with open(categories_csv_path, mode='w', encoding='utf-8-sig', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Name'])
+            for cat in categories:
+                if cat['category']:
+                    writer.writerow([cat['category']])
+        print(f"Successfully synced categories to CSV: {len(categories)} categories written.")
+    except Exception as e:
+        print(f"Error syncing categories to CSV: {e}")
+        
+    cursor.close()
+    conn.close()
+

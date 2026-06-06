@@ -398,6 +398,10 @@ def update_item_stock(item_id_or_name: str, new_stock: int) -> str:
     cursor.close()
     conn.close()
     
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
+    
     # Trigger refresh to show updated stock lists on dashboard
     add_ai_action('refresh_page', True)
     return f"Successfully updated stock for '{item['name']}' to {new_stock}."
@@ -717,6 +721,10 @@ def add_new_product(name: str, description: str, price: float, category: str, st
     cursor.close()
     conn.close()
     
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
+    
     add_ai_action('refresh_page', True)
     return f"Successfully added new product '{name}' to the store database under category '{category}'."
 
@@ -784,6 +792,10 @@ def edit_product_details(item_name_or_id: str, name: str = None, description: st
     cursor.close()
     conn.close()
     
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
+    
     add_ai_action('refresh_page', True)
     return f"Successfully updated product '{item['name']}' details in inventory!"
 
@@ -822,6 +834,10 @@ def delete_product(item_name_or_id: str) -> str:
     conn.commit()
     cursor.close()
     conn.close()
+    
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
     
     add_ai_action('refresh_page', True)
     return f"Successfully deleted product '{item['name']}' from the inventory."
@@ -888,6 +904,10 @@ def rename_item_category(old_name: str, new_name: str) -> str:
     conn.commit()
     cursor.close()
     conn.close()
+    
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
     
     add_ai_action('refresh_page', True)
     return f"Successfully renamed category '{old_name}' to '{new_name}' (updated {count} items)."

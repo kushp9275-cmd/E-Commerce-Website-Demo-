@@ -988,6 +988,10 @@ def add_item():
     cursor.close()
     conn.close()
     
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
+    
     flash("Item added successfully!", "success")
     return redirect(url_for('admin_dashboard'))
 
@@ -1024,6 +1028,10 @@ def edit_item(item_id):
     cursor.close()
     conn.close()
 
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
+
     flash("Item updated successfully!", "success")
     return redirect(url_for('admin_dashboard'))
 
@@ -1041,6 +1049,10 @@ def delete_item(item_id):
     conn.commit()
     cursor.close()
     conn.close()
+
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
 
     flash("Item deleted successfully!", "success")
     return redirect(url_for('admin_dashboard'))
@@ -1086,6 +1098,10 @@ def rename_category():
     conn.commit()
     cursor.close()
     conn.close()
+
+    # Sync database to CSV
+    from setup_db import sync_db_to_csv
+    sync_db_to_csv()
 
     flash(f"Category '{old_category}' successfully renamed to '{new_category}'!", "success")
     return redirect(url_for('admin_divisions'))
