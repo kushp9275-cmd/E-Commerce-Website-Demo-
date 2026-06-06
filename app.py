@@ -893,12 +893,66 @@ def admin_update_order_status(order_id):
     
     conn = get_db_connection()
     cursor = conn.cursor()
+    cursor.execute("SELECT status FROM orders WHERE id = ?", (order_id,))
+    order_row = cursor.fetchone()
+    if not order_row:
+        cursor.close()
+        conn.close()
+        flash("Order not found.", "error")
+        return redirect(url_for('admin_orders'))
+        
+    old_status = order_row['status']
+    
+    # If transitioning to cancelled, restore stock
+    if new_status == 'cancelled' and old_status != 'cancelled':
+        cursor.execute("SELECT item_id, quantity FROM order_items WHERE order_id = ?", (order_id,))
+        for item in cursor.fetchall():
+            cursor.execute("UPDATE items SET stock = stock + ? WHERE id = ?", (item['quantity'], item['item_id']))
+    # If transitioning from cancelled back to active, decrement stock
+    elif new_status != 'cancelled' and old_status == 'cancelled':
+        cursor.execute("SELECT item_id, quantity FROM order_items WHERE order_id = ?", (order_id,))
+        items = cursor.fetchall()
+        for item in items:
+            cursor.execute("SELECT name, stock FROM items WHERE id = ?", (item['item_id'],))
+            prod = cursor.fetchone()
+            if prod and prod['stock'] < item['quantity']:
+                cursor.close()
+                conn.close()
+                flash(f"Cannot update status. Insufficient stock for '{prod['name']}' (Only {prod['stock']} available).", "error")
+                return redirect(url_for('admin_orders'))
+        for item in items:
+            cursor.execute("UPDATE items SET stock = stock - ? WHERE id = ?", (item['quantity'], item['item_id']))
+            
     cursor.execute("UPDATE orders SET status = ? WHERE id = ?", (new_status, order_id))
     conn.commit()
     cursor.close()
     conn.close()
     
     flash(f"Order #{order_id} status updated to {new_status.replace('_', ' ').title()}.", "success")
+    return redirect(url_for('admin_orders'))
+
+@app.route('/admin/order/delete/<int:order_id>', methods=['POST'])
+def admin_delete_order(order_id):
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        return redirect(url_for('home'))
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT status FROM orders WHERE id = ?", (order_id,))
+    order_row = cursor.fetchone()
+    if order_row and order_row['status'] != 'cancelled':
+        cursor.execute("SELECT item_id, quantity FROM order_items WHERE order_id = ?", (order_id,))
+        for item in cursor.fetchall():
+            cursor.execute("UPDATE items SET stock = stock + ? WHERE id = ?", (item['quantity'], item['item_id']))
+            
+    cursor.execute("DELETE FROM order_items WHERE order_id = ?", (order_id,))
+    cursor.execute("DELETE FROM orders WHERE id = ?", (order_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    flash(f"Order #{order_id} deleted successfully.", "success")
     return redirect(url_for('admin_orders'))
 
 @app.route('/admin/item/add', methods=['POST'])
@@ -991,5 +1045,21 @@ def delete_item(item_id):
     flash("Item deleted successfully!", "success")
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    from flask import jsonify
+    if 'user_id' not in session:
+        return jsonify({'text': 'Please log in to chat with the assistant.', 'actions': []}), 401
+    
+    data = request.get_json() or {}
+    message = data.get('message', '').strip()
+    if not message:
+        return jsonify({'text': 'Please enter a message.', 'actions': []}), 400
+        
+    from ai_helper import handle_ai_message
+    res = handle_ai_message(message)
+    return jsonify(res)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
