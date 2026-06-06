@@ -147,5 +147,9 @@
             });
         }, 3000);
     </script>
+
+    {% if session.get('user_id') %}
+        {% include 'ai_chat.html' %}
+    {% endif %}
 </body>
 </html>
