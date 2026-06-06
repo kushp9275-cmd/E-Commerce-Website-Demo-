@@ -252,6 +252,20 @@
             document.body.appendChild(form);
             form.submit();
         }
+
+        // Forward scroll event from sidebar to vertical filters list
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.querySelector('.sidebar-categories');
+            if (sidebar) {
+                sidebar.addEventListener('wheel', function(e) {
+                    const filters = document.querySelector('.vertical-filters');
+                    if (filters) {
+                        filters.scrollTop += e.deltaY;
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            }
+        });
     </script>
 
     {% if session.get('user_id') %}
