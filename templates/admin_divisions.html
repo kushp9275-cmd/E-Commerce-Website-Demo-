@@ -46,23 +46,17 @@
             <table class="inventory-table">
                 <thead>
                     <tr>
-                        <th>Division Name</th>
-                        <th>Associated Products</th>
-                        <th style="text-align: right;">Actions</th>
+                        <th style="padding: 1rem 1.5rem;">Division Name</th>
+                        <th style="text-align: right; padding-right: 2rem;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for div in divisions %}
                     <tr>
-                        <td style="font-weight: 600; font-size: 1.05rem;">
+                        <td style="font-weight: 600; font-size: 1.05rem; padding: 1.25rem 1.5rem;">
                             {{ div.category }}
                         </td>
-                        <td>
-                            <span class="category-badge" style="background: rgba(124, 58, 237, 0.1); color: var(--accent); padding: 0.35rem 0.65rem; border-radius: 50px;">
-                                {{ div.product_count }} items
-                            </span>
-                        </td>
-                        <td style="text-align: right;">
+                        <td style="text-align: right; padding-right: 2rem;">
                             <button class="btn-edit" onclick="openRenameModal('{{ div.category|replace('\'', '\\\'') }}')">
                                 ✏️ Rename
                             </button>
