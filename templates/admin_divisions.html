@@ -15,6 +15,13 @@
         <div class="nav-links">
             <a href="{{ url_for('admin_dashboard') }}" class="welcome-text">Inventory</a>
             <a href="{{ url_for('admin_orders') }}" class="welcome-text">Orders</a>
+            <form id="dp-form" action="{{ url_for('upload_dp') }}" method="POST" enctype="multipart/form-data" class="dp-form" style="display: flex; align-items: center; background: transparent; padding: 0;">
+                <label for="dp-upload" class="dp-label" title="Change Profile Picture">
+                    <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}" alt="DP" class="profile-pic" onerror="this.src='https://ui-avatars.com/api/?name={{ session['username'] }}&background=random'">
+                    <span class="dp-hover-text">Edit</span>
+                </label>
+                <input type="file" id="dp-upload" name="dp" accept="image/*" onchange="document.getElementById('dp-form').submit();">
+            </form>
             <a href="{{ url_for('profile') }}" class="welcome-text">{{ session.username }}</a>
             <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         </div>
