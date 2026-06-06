@@ -1,0 +1,192 @@
+<div class="ai-widget" id="ai-assistant-widget">
+    <!-- Chat toggle bubble -->
+    <div class="ai-bubble" id="ai-toggle-bubble" title="Chat with Mart AI Assistant">
+        🤖
+    </div>
+
+    <!-- Chat box panel -->
+    <div class="ai-chatbox" id="ai-chat-panel">
+        <div class="ai-chat-header">
+            <h3>
+                <span class="ai-icon">✨</span> Mart AI Assistant
+            </h3>
+            <button class="close-btn" id="ai-close-btn">&times;</button>
+        </div>
+
+        <!-- Message logs -->
+        <div class="ai-chat-messages" id="ai-message-log">
+            <div class="ai-message assistant">
+                Hello <strong>{{ session.get('username', 'Guest') }}</strong>! I'm your Mart AI assistant. 
+                How can I help you today?
+            </div>
+        </div>
+
+        <!-- Suggestion chips (Context aware) -->
+        <div class="ai-chat-suggestions" id="ai-suggestions-bar">
+            {% if session.get('role') == 'Admin' %}
+                <div class="ai-suggestion-chip" data-text="Get store metrics">📈 View Stats</div>
+                <div class="ai-suggestion-chip" data-text="What items are low in stock?">⚠️ Low Stock</div>
+                <div class="ai-suggestion-chip" data-text="Go to home dashboard">🏠 Dashboard</div>
+            {% else %}
+                <div class="ai-suggestion-chip" data-text="Search for butter">🧈 Search Butter</div>
+                <div class="ai-suggestion-chip" data-text="View my cart">🛒 View Cart</div>
+                <div class="ai-suggestion-chip" data-text="Go to my profile settings">👤 Profile</div>
+            {% endif %}
+        </div>
+
+        <!-- Input control area -->
+        <form class="ai-chat-input-area" id="ai-chat-form">
+            <input type="text" class="ai-chat-input" id="ai-user-input" placeholder="Type a message or command..." autocomplete="off" required />
+            <button type="submit" class="ai-send-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.236-.236 1.178Z"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const toggleBubble = document.getElementById("ai-toggle-bubble");
+    const chatPanel = document.getElementById("ai-chat-panel");
+    const closeBtn = document.getElementById("ai-close-btn");
+    const chatForm = document.getElementById("ai-chat-form");
+    const userInput = document.getElementById("ai-user-input");
+    const messageLog = document.getElementById("ai-message-log");
+    const suggestionsBar = document.getElementById("ai-suggestions-bar");
+
+    // Toggle chatbox visibility
+    toggleBubble.addEventListener("click", () => {
+        chatPanel.classList.toggle("active");
+        userInput.focus();
+        scrollChatToBottom();
+    });
+
+    closeBtn.addEventListener("click", () => {
+        chatPanel.classList.remove("active");
+    });
+
+    // Handle Suggestions
+    suggestionsBar.addEventListener("click", (e) => {
+        const chip = e.target.closest(".ai-suggestion-chip");
+        if (chip) {
+            const promptText = chip.getAttribute("data-text");
+            sendMessage(promptText);
+        }
+    });
+
+    // Form submit listener
+    chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = userInput.value.trim();
+        if (text) {
+            sendMessage(text);
+            userInput.value = "";
+        }
+    });
+
+    function scrollChatToBottom() {
+        messageLog.scrollTop = messageLog.scrollHeight;
+    }
+
+    function appendMessage(text, isUser = false) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `ai-message ${isUser ? 'user' : 'assistant'}`;
+        
+        // Convert some simple markdown links/bold text if returned
+        if (isUser) {
+            msgDiv.textContent = text;
+        } else {
+            // Very simple formatter for bolding and bullets
+            let formatted = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/- (.*?)\n/g, '• $1<br/>')
+                .replace(/\n/g, '<br/>');
+            msgDiv.innerHTML = formatted;
+        }
+        
+        messageLog.appendChild(msgDiv);
+        scrollChatToBottom();
+    }
+
+    function appendTypingIndicator() {
+        const indicator = document.createElement("div");
+        indicator.className = "ai-message assistant typing-indicator";
+        indicator.id = "ai-typing";
+        indicator.innerHTML = "<em>AI is thinking...</em>";
+        messageLog.appendChild(indicator);
+        scrollChatToBottom();
+    }
+
+    function removeTypingIndicator() {
+        const indicator = document.getElementById("ai-typing");
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+
+    function executeActions(actions) {
+        if (!actions || actions.length === 0) return;
+        
+        actions.forEach(action => {
+            console.log("AI executing action:", action);
+            if (action.type === 'redirect') {
+                setTimeout(() => {
+                    window.location.href = action.value;
+                }, 1000);
+            } else if (action.type === 'refresh_cart') {
+                // Fetch the cart count asynchronously or update DOM if cart elements exist
+                const cartBadge = document.querySelector(".cart-badge");
+                if (cartBadge) {
+                    // Quick reload or visual indicator
+                    cartBadge.style.transform = "scale(1.3)";
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                } else {
+                    window.location.reload();
+                }
+            } else if (action.type === 'refresh_page') {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+            }
+        });
+    }
+
+    function sendMessage(messageText) {
+        // Render user message locally
+        appendMessage(messageText, true);
+        appendTypingIndicator();
+
+        fetch("/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: messageText })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            removeTypingIndicator();
+            if (data.text) {
+                appendMessage(data.text, false);
+            }
+            if (data.actions) {
+                executeActions(data.actions);
+            }
+        })
+        .catch(err => {
+            removeTypingIndicator();
+            appendMessage("Sorry, I could not connect to the server. Please try again later.", false);
+            console.error("AI Assistant Error:", err);
+        });
+    }
+});
+</script>
