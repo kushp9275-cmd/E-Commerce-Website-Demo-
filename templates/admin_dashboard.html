@@ -48,10 +48,10 @@
                 {% for cat in categories %}
                 <a href="{{ url_for('admin_dashboard', category=cat) }}" class="category-pill {% if current_category == cat %}active{% endif %}">{{ cat }}</a>
                 {% endfor %}
-                <button class="category-pill" style="margin-top: 1rem; border: 1px dashed var(--border-color, #ccc); background: transparent; cursor: pointer; color: var(--text-color, #333); display: flex; align-items: center; justify-content: center; gap: 0.25rem; width: 100%; text-align: left;" onclick="openRenameCategoryModal()">
-                    ✏️ Rename Division
-                </button>
             </div>
+            <button class="category-pill" style="margin-top: 1rem; border: 1px dashed var(--border-color, #ccc); background: transparent; cursor: pointer; color: var(--text-color, #333); display: flex; align-items: center; justify-content: center; gap: 0.25rem; width: 100%; text-align: left;" onclick="openRenameCategoryModal()">
+                ✏️ Rename Division
+            </button>
         </aside>
  
         <!-- Admin Table Content -->

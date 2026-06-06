@@ -627,6 +627,9 @@ nav.navbar {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .category-pill {
