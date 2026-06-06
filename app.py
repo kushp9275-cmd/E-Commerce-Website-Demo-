@@ -1045,6 +1045,28 @@ def delete_item(item_id):
     flash("Item deleted successfully!", "success")
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/admin/category/rename', methods=['POST'])
+def rename_category():
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        return redirect(url_for('home'))
+
+    old_category = request.form.get('old_category', '').strip()
+    new_category = request.form.get('new_category', '').strip()
+
+    if not old_category or not new_category:
+        flash("Category names cannot be empty.", "error")
+        return redirect(url_for('admin_dashboard'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE items SET category = ? WHERE category = ?", (new_category, old_category))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash(f"Category '{old_category}' successfully renamed to '{new_category}'!", "success")
+    return redirect(url_for('admin_dashboard'))
+
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
     from flask import jsonify

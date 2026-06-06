@@ -48,6 +48,9 @@
                 {% for cat in categories %}
                 <a href="{{ url_for('admin_dashboard', category=cat) }}" class="category-pill {% if current_category == cat %}active{% endif %}">{{ cat }}</a>
                 {% endfor %}
+                <button class="category-pill" style="margin-top: 1rem; border: 1px dashed var(--border-color, #ccc); background: transparent; cursor: pointer; color: var(--text-color, #333); display: flex; align-items: center; justify-content: center; gap: 0.25rem; width: 100%; text-align: left;" onclick="openRenameCategoryModal()">
+                    ✏️ Rename Division
+                </button>
             </div>
         </aside>
  
@@ -223,6 +226,32 @@
                 setTimeout(() => msg.remove(), 500);
             });
         }, 3000);
+
+        function openRenameCategoryModal() {
+            const oldCat = prompt("Enter the name of the Division/Category you want to rename (e.g. 'Cold Drinks'):");
+            if (!oldCat || !oldCat.trim()) return;
+            const newCat = prompt(`Enter the new name for category '${oldCat.trim()}':`);
+            if (!newCat || !newCat.trim()) return;
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/admin/category/rename';
+            
+            const oldInput = document.createElement('input');
+            oldInput.type = 'hidden';
+            oldInput.name = 'old_category';
+            oldInput.value = oldCat.trim();
+            
+            const newInput = document.createElement('input');
+            newInput.type = 'hidden';
+            newInput.name = 'new_category';
+            newInput.value = newCat.trim();
+            
+            form.appendChild(oldInput);
+            form.appendChild(newInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 
     {% if session.get('user_id') %}

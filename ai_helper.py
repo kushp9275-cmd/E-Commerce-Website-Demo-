@@ -862,6 +862,37 @@ def list_all_orders(status_filter: str = "all") -> str:
     return f"Found {len(rows)} orders. Opening the order list for you:\n" + "\n".join(result)
 
 
+def rename_item_category(old_name: str, new_name: str) -> str:
+    """
+    Rename/modify an existing product category division in the catalog to a new name (Admin only).
+    This updates all products belonging to the old category.
+    
+    Args:
+        old_name: The current name of the category (case-sensitive).
+        new_name: The new name of the category.
+    """
+    if session.get('role') != 'Admin':
+        return "Error: Access Denied. Only administrators can rename categories."
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) as count FROM items WHERE category = ?", (old_name,))
+    count = cursor.fetchone()['count']
+    
+    if count == 0:
+        cursor.close()
+        conn.close()
+        return f"Error: No items found in category '{old_name}'."
+        
+    cursor.execute("UPDATE items SET category = ? WHERE category = ?", (new_name, old_name))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    add_ai_action('refresh_page', True)
+    return f"Successfully renamed category '{old_name}' to '{new_name}' (updated {count} items)."
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # CORE CHAT DISPATCHER
 # ─────────────────────────────────────────────────────────────────────────────
@@ -938,13 +969,13 @@ def handle_ai_message(user_message: str) -> dict:
     if role == 'Admin':
         tool_list.extend([
             get_admin_metrics, update_item_stock, update_order_status, delete_order, delete_all_orders,
-            add_new_product, edit_product_details, delete_product, list_all_orders
+            add_new_product, edit_product_details, delete_product, list_all_orders, rename_item_category
         ])
         role_instruction = (
             "You are an administrative assistant for the Mart e-commerce store. "
             "You have access to privileged administrative tools to update stock levels, edit order statuses, "
             "delete orders, delete all orders, add new products, edit product details, delete products, "
-            "list all orders, and fetch general site metrics."
+            "list all orders, rename item categories, and fetch general site metrics."
         )
         
     system_instruction = (
@@ -953,7 +984,7 @@ def handle_ai_message(user_message: str) -> dict:
         "Keep your responses friendly, concise, and helpful. "
         "When the user asks to add items, view the cart, navigate, checkout/place orders, delete orders, delete all orders, "
         "update profile details, change cart item quantities, track an order, log out, add products, edit products, delete products, "
-        "or list orders, always use the appropriate tool function instead of just talking about it. "
+        "list orders, or rename categories, always use the appropriate tool function instead of just talking about it. "
         "Only call administrative tools if the user is verified as an Admin (which they are if role is Admin)."
     )
     
@@ -1002,7 +1033,8 @@ def handle_ai_message(user_message: str) -> dict:
             'add_new_product': add_new_product,
             'edit_product_details': edit_product_details,
             'delete_product': delete_product,
-            'list_all_orders': list_all_orders
+            'list_all_orders': list_all_orders,
+            'rename_item_category': rename_item_category
         }
         
         # Helper to safely retrieve function calls from GenerateContentResponse
