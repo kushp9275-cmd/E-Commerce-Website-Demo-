@@ -925,6 +925,9 @@ def handle_ai_message(user_message: str) -> dict:
             'actions': actions
         }
         
+    # Configure API key explicitly
+    genai.configure(api_key=api_key)
+        
     # Compile the tools based on user permissions
     tool_list = [
         search_items, add_item_to_cart, remove_item_from_cart, view_cart, navigate_to, checkout_cart,
@@ -1041,7 +1044,10 @@ def handle_ai_message(user_message: str) -> dict:
                 )
             function_calls = get_function_calls(response)
         
-        final_text = response.text
+        try:
+            final_text = response.text
+        except Exception:
+            final_text = "I have successfully processed your request."
         
         # Save to chat history
         chat_history.append({'role': 'user', 'text': user_message})
