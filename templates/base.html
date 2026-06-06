@@ -37,6 +37,11 @@
 
     {% include 'footer.html' %}
 
+    {% if session.get('user_id') %}
+        {% include 'ai_chat.html' %}
+    {% endif %}
+
     <script src="{{ url_for('static', filename='theme.js') }}" defer></script>
 </body>
 </html>
+
