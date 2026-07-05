@@ -11,7 +11,7 @@ from datetime import datetime
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your_super_secret_key_here'
+app.secret_key = os.getenv('SECRET_KEY', 'your_super_secret_key_here')
 
 # Automatically initialize database and tables on startup
 from setup_db import create_database_and_table
