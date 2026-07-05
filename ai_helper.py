@@ -963,7 +963,7 @@ def handle_ai_message(user_message: str) -> dict:
             text = f"*(Offline Simulation Mode)*\n{text}"
         else:
             text = (
-                f"Hello {user_name}! I am the Mart AI Assistant running in **Offline Simulation Mode**.\n\n"
+                f"Hello {user_name}! I am the NeoCart AI Assistant running in **Offline Simulation Mode**.\n\n"
                 f"I can simulate database and interface control directly! Try typing:\n"
                 f"- *'add butter to cart'*\n"
                 f"- *'view my cart'*\n"
@@ -985,14 +985,14 @@ def handle_ai_message(user_message: str) -> dict:
         update_profile_details, update_cart_quantity, track_order, logout_user
     ]
     
-    role_instruction = "You are a customer assistant for the Mart e-commerce store."
+    role_instruction = "You are a customer assistant for the NeoCart e-commerce store."
     if role == 'Admin':
         tool_list.extend([
             get_admin_metrics, update_item_stock, update_order_status, delete_order, delete_all_orders,
             add_new_product, edit_product_details, delete_product, list_all_orders, rename_item_category
         ])
         role_instruction = (
-            "You are an administrative assistant for the Mart e-commerce store. "
+            "You are an administrative assistant for the NeoCart e-commerce store. "
             "You have access to privileged administrative tools to update stock levels, edit order statuses, "
             "delete orders, delete all orders, add new products, edit product details, delete products, "
             "list all orders, rename item categories, and fetch general site metrics."

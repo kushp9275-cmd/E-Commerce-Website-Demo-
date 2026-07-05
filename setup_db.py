@@ -98,9 +98,9 @@ def create_database_and_table(db_path='mart.db'):
     cursor.execute("SELECT COUNT(*) FROM items")
     current_count = cursor.fetchone()[0]
     
-    # We want exactly the items from items_MAA_Mini_mart.csv
+    # We want exactly the items from items_neocart.csv
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    items_csv_path = os.path.join(base_dir, 'items_MAA_Mini_mart.csv')
+    items_csv_path = os.path.join(base_dir, 'items_neocart.csv')
     
     if not os.path.exists(items_csv_path):
         print("Product CSV file not found. Skipping synchronization.")
@@ -125,9 +125,9 @@ def create_database_and_table(db_path='mart.db'):
         cursor.execute("DELETE FROM order_items")
         cursor.execute("DELETE FROM sqlite_sequence WHERE name IN ('items', 'cart', 'orders', 'order_items')")
         
-        # Load categories from item-categories_MAA_Mini_mart.csv for reference
+        # Load categories from item-categories_neocart.csv for reference
         categories = set()
-        categories_csv_path = os.path.join(base_dir, 'item-categories_MAA_Mini_mart.csv')
+        categories_csv_path = os.path.join(base_dir, 'item-categories_neocart.csv')
         if os.path.exists(categories_csv_path):
             try:
                 with open(categories_csv_path, mode='r', encoding='utf-8-sig') as f:
@@ -321,8 +321,8 @@ if __name__ == '__main__':
 
 def sync_db_to_csv(db_path=None):
     """
-    Exports the current items in the SQLite database back to the items_MAA_Mini_mart.csv
-    and item-categories_MAA_Mini_mart.csv files. This keeps the CSV source files
+    Exports the current items in the SQLite database back to the items_neocart.csv
+    and item-categories_neocart.csv files. This keeps the CSV source files
     synchronized with any edits, additions, or deletions made through the website.
     """
     import csv
@@ -330,8 +330,8 @@ def sync_db_to_csv(db_path=None):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         db_path = os.path.join(base_dir, 'mart.db')
         
-    items_csv_path = os.path.join(os.path.dirname(db_path), 'items_MAA_Mini_mart.csv')
-    categories_csv_path = os.path.join(os.path.dirname(db_path), 'item-categories_MAA_Mini_mart.csv')
+    items_csv_path = os.path.join(os.path.dirname(db_path), 'items_neocart.csv')
+    categories_csv_path = os.path.join(os.path.dirname(db_path), 'item-categories_neocart.csv')
     
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -344,7 +344,7 @@ def sync_db_to_csv(db_path=None):
     try:
         with open(items_csv_path, mode='w', encoding='utf-8-sig', newline='') as f:
             writer = csv.writer(f)
-            # Match the exact headers of items_MAA_Mini_mart.csv
+            # Match the exact headers of items_neocart.csv
             writer.writerow(['Item ID', 'Item Name', 'Description', 'Sales Rate', 'Category Name', 'image_url', 'Available Stock'])
             for item in items:
                 price_val = item['price']
