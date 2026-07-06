@@ -8,9 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
-    <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-brand">E-Commerce Website Dashboard</div>
+        <div class="nav-brand">
+            <a href="{{ url_for('dashboard') }}" class="navbar-logo-link">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NeoCart Logo" class="navbar-logo" />
+            </a>
+        </div>
         <div class="nav-links">
             <!-- Search Bar -->
             <form action="{{ url_for('dashboard') }}" method="GET" class="search-form">
