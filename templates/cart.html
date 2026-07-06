@@ -10,7 +10,11 @@
 <body class="dashboard-body">
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color:white;">E-Commerce Website Dashboard</a></div>
+        <div class="nav-brand">
+            <a href="{{ url_for('dashboard') }}" class="navbar-logo-link">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NeoCart Logo" class="navbar-logo" />
+            </a>
+        </div>
         <div class="nav-links">
             <a href="{{ url_for('dashboard') }}" class="logout-btn" style="border-color: var(--primary-color);">← Continue Shopping</a>
             <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
