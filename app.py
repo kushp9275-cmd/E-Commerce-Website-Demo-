@@ -100,35 +100,172 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
-    mobile_no = request.form.get('mobile_no')
-    address = request.form.get('address')
-    role = request.form.get('role', 'User')
+    username = request.form.get('username', '').strip()
+    email = request.form.get('email', '').strip()
+    password = request.form.get('password', '').strip()
+    mobile_no = request.form.get('mobile_no', '').strip()
+    address = request.form.get('address', '').strip()
+    role = request.form.get('role', 'User').strip()
     
     if not username or not email or not password or not mobile_no or not address:
         flash("All fields are required.", "error")
         return redirect(url_for('home'))
 
-    hashed_password = generate_password_hash(password)
-
+    # Check if email is already registered
     conn = get_db_connection()
     cursor = conn.cursor()
-    try:
-        cursor.execute(
-            "INSERT INTO users (username, email, password_hash, mobile_no, address, role) VALUES (?, ?, ?, ?, ?, ?)",
-            (username, email, hashed_password, mobile_no, address, role)
-        )
-        conn.commit()
-        flash("Registration successful! Please log in.", "success")
-    except sqlite3.IntegrityError:
+    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+    existing_user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if existing_user:
         flash("Email already registered.", "error")
-    finally:
+        return redirect(url_for('home'))
+
+    # Generate registration verification code
+    from verification_helper import generate_code, send_confirmation_email
+    code = generate_code()
+    
+    # Save temporary data in session
+    session['temp_registration'] = {
+        'username': username,
+        'email': email,
+        'password': password,
+        'mobile_no': mobile_no,
+        'address': address,
+        'role': role,
+        'code': code
+    }
+
+    # Send verification email
+    sent = send_confirmation_email(email, username, code)
+    if not sent:
+        flash("Failed to send verification email. Please try again.", "error")
+        return redirect(url_for('home'))
+
+    return redirect(url_for('verify_registration'))
+
+@app.route('/verify-registration', methods=['GET', 'POST'])
+def verify_registration():
+    temp_reg = session.get('temp_registration')
+    if not temp_reg:
+        flash("No active registration found. Please register first.", "error")
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        user_code = request.form.get('verification_code', '').strip()
+        if user_code != temp_reg['code']:
+            flash("Invalid registration code. Please try again.", "error")
+            return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
+
+        # If Admin, verify the admin security code
+        if temp_reg['role'] == 'Admin':
+            admin_code = request.form.get('admin_security_code', '').strip()
+            required_admin_code = os.getenv('ADMIN_SECURITY_CODE', 'ADMIN123')
+            if admin_code != required_admin_code:
+                flash("Invalid Admin Security Code.", "error")
+                return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=True)
+
+        # Create account in database
+        hashed_password = generate_password_hash(temp_reg['password'])
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO users (username, email, password_hash, mobile_no, address, role) VALUES (?, ?, ?, ?, ?, ?)",
+                (temp_reg['username'], temp_reg['email'], hashed_password, temp_reg['mobile_no'], temp_reg['address'], temp_reg['role'])
+            )
+            conn.commit()
+            flash("Account verified and created successfully! Please log in.", "success")
+            session.pop('temp_registration', None)
+            return redirect(url_for('home'))
+        except sqlite3.IntegrityError:
+            flash("Email already registered during verification.", "error")
+            return redirect(url_for('home'))
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        user_or_email = request.form.get('user_or_email', '').strip()
+        phone_no = request.form.get('phone_no', '').strip()
+        
+        if not user_or_email or not phone_no:
+            flash("All fields are required.", "error")
+            return redirect(url_for('forgot_password'))
+            
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM users WHERE (username = ? OR email = ?) AND mobile_no = ?",
+            (user_or_email, user_or_email, phone_no)
+        )
+        user = cursor.fetchone()
         cursor.close()
         conn.close()
+        
+        if user:
+            from verification_helper import generate_code, send_otp_sms
+            otp = generate_code()
+            session['reset_email'] = user['email']
+            session['reset_otp'] = otp
+            
+            # Send SMS OTP
+            send_otp_sms(user['mobile_no'], otp)
+            flash("OTP has been sent to your registered mobile number.", "success")
+            return redirect(url_for('reset_password'))
+        else:
+            flash("Account details do not match any registered user.", "error")
+            return redirect(url_for('forgot_password'))
+            
+    return render_template('forgot_password.html')
 
-    return redirect(url_for('home'))
+@app.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
+    reset_email = session.get('reset_email')
+    reset_otp = session.get('reset_otp')
+    
+    if not reset_email or not reset_otp:
+        flash("Session expired or invalid reset request.", "error")
+        return redirect(url_for('forgot_password'))
+        
+    if request.method == 'POST':
+        user_otp = request.form.get('otp', '').strip()
+        new_password = request.form.get('new_password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+        
+        if user_otp != reset_otp:
+            flash("Invalid OTP code.", "error")
+            return render_template('reset_password.html')
+            
+        if new_password != confirm_password:
+            flash("Passwords do not match.", "error")
+            return render_template('reset_password.html')
+            
+        # Update database
+        hashed_password = generate_password_hash(new_password)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("UPDATE users SET password_hash = ? WHERE email = ?", (hashed_password, reset_email))
+            conn.commit()
+            flash("Password reset successfully! Please log in with your new password.", "success")
+            session.pop('reset_email', None)
+            session.pop('reset_otp', None)
+            return redirect(url_for('home'))
+        except Exception as e:
+            flash(f"Failed to reset password: {e}", "error")
+            return render_template('reset_password.html')
+        finally:
+            cursor.close()
+            conn.close()
+            
+    return render_template('reset_password.html')
 
 @app.route('/logout')
 def logout():
