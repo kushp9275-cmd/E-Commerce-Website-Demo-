@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 160" width="100%" height="100%">
+  <defs>
+    <!-- Gradients matching the logo's aesthetics -->
+    <linearGradient id="starGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9d1cff" /> <!-- Deep Purple -->
+      <stop offset="40%" stop-color="#7000ff" /> <!-- Violet -->
+      <stop offset="70%" stop-color="#0052ff" /> <!-- Royal Blue -->
+      <stop offset="100%" stop-color="#00d4ff" /> <!-- Cyan -->
+    </linearGradient>
+    
+    <linearGradient id="arrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7000ff" /> <!-- Violet -->
+      <stop offset="35%" stop-color="#0052ff" /> <!-- Royal Blue -->
+      <stop offset="75%" stop-color="#00c8ff" /> <!-- Cyan/Teal -->
+      <stop offset="100%" stop-color="#00f2fe" /> <!-- Bright Turquoise -->
+    </linearGradient>
+
+    <linearGradient id="cartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe" /> <!-- Bright Turquoise -->
+      <stop offset="50%" stop-color="#00a8ff" /> <!-- Sky Blue -->
+      <stop offset="100%" stop-color="#0052ff" /> <!-- Royal Blue -->
+    </linearGradient>
+    
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#003cd2" /> <!-- Deep Blue -->
+      <stop offset="100%" stop-color="#0057ff" /> <!-- Royal Blue -->
+    </linearGradient>
+
+    <!-- Drop shadow filter for premium depth -->
+    <filter id="subtle-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Logo Graphic Group -->
+  <g filter="url(#subtle-shadow)">
+    <!-- Star Outline (Tilted slightly counter-clockwise, open-ended) -->
+    <!-- Path matches the 3D-like volumetric stroke in the logo image -->
+    <path d="M 68,18 
+             L 81,46 
+             L 112,46 
+             L 89,66 
+             L 97,97 
+             L 68,81 
+             L 39,97 
+             L 47,66 
+             L 24,46 
+             L 55,46 
+             Z" 
+          fill="none" 
+          stroke="url(#starGrad)" 
+          stroke-width="7.5" 
+          stroke-linejoin="round" 
+          stroke-linecap="round" />
+
+    <!-- Sweeping Cart Handle & Arrow (Swoosh) -->
+    <!-- Sweeps from within the star, curves down, and arcs dramatically up-right to form an arrow -->
+    <path d="M 28,68 
+             C 45,95 72,102 108,82 
+             C 130,70 142,50 162,28" 
+          fill="none" 
+          stroke="url(#arrowGrad)" 
+          stroke-width="9" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+          
+    <!-- Arrowhead pointing up-right -->
+    <path d="M 148,27 
+             L 170,20 
+             L 165,42 
+             Z" 
+          fill="url(#arrowGrad)" 
+          stroke="url(#arrowGrad)" 
+          stroke-width="2" 
+          stroke-linejoin="round" />
+
+    <!-- Cart Basket (Smooth loops below the swoosh) -->
+    <!-- The main U-loop of the cart -->
+    <path d="M 82,78 
+             C 82,88 88,94 102,94 
+             C 118,94 125,86 128,62" 
+          fill="none" 
+          stroke="url(#cartGrad)" 
+          stroke-width="7.5" 
+          stroke-linecap="round" />
+          
+    <!-- The bottom shelf/horizontal loop of the cart -->
+    <path d="M 76,92 
+             L 112,92 
+             C 122,92 126,88 126,76" 
+          fill="none" 
+          stroke="url(#cartGrad)" 
+          stroke-width="7.5" 
+          stroke-linecap="round" />
+
+    <!-- Wheels (Two hollow rings under the cart) -->
+    <circle cx="81" cy="120" r="7.5" fill="none" stroke="url(#cartGrad)" stroke-width="5.5" />
+    <circle cx="115" cy="120" r="7.5" fill="none" stroke="url(#cartGrad)" stroke-width="5.5" />
+  </g>
+
+  <!-- Typography -->
+  <!-- "NEO" in Dark Royal Blue, "CART" in Bright Teal/Cyan -->
+  <text x="195" y="86" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Outfit', 'Sora', 'Inter', sans-serif" font-weight="800" font-size="56" letter-spacing="-1">
+    <tspan fill="#003cd2" class="text-neo">NEO</tspan><tspan fill="#00a8ff">CART</tspan>
+  </text>
+  
+  <!-- Tagline "Your Future, Delivered." in modern Slate Gray -->
+  <text x="197" y="121" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Inter', sans-serif" font-weight="500" font-size="19.5" fill="#64748b" letter-spacing="0.5">
+    Your Future, Delivered.
+  </text>
+</svg>
