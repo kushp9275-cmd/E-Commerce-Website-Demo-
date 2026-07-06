@@ -1,8 +1,7 @@
 <nav class="glass p-2 rounded flex items-center justify-between">
     <div class="flex items-center">
-        <a href="{{ url_for('dashboard') }}" class="text-2xl font-semibold" style="color: var(--primary-color);">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" style="height: 40px; vertical-align: middle;" />
-            <span class="ml-2">NeoCart</span>
+        <a href="{{ url_for('dashboard') }}" class="navbar-logo-link">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NeoCart Logo" class="navbar-logo" />
         </a>
     </div>
     <div class="hidden md:flex space-x-4 items-center">
