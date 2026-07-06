@@ -11,7 +11,12 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-brand"><a href="{{ url_for('admin_dashboard') }}" style="color: inherit;">Admin Portal</a></div>
+        <div class="nav-brand">
+            <a href="{{ url_for('admin_dashboard') }}" class="navbar-logo-link">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NeoCart Logo" class="navbar-logo" />
+                <span class="admin-badge">Admin</span>
+            </a>
+        </div>
         <div class="nav-links">
             <a href="{{ url_for('admin_dashboard') }}" class="logout-btn" style="border-color: var(--primary);">← Back to Inventory</a>
             <form id="dp-form" action="{{ url_for('upload_dp') }}" method="POST" enctype="multipart/form-data" class="dp-form" style="display: flex; align-items: center; background: transparent; padding: 0;">
