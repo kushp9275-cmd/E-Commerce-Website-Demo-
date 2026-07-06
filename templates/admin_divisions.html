@@ -11,7 +11,12 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-brand">Admin Portal</div>
+        <div class="nav-brand">
+            <a href="{{ url_for('admin_dashboard') }}" class="navbar-logo-link">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NeoCart Logo" class="navbar-logo" />
+                <span class="admin-badge">Admin</span>
+            </a>
+        </div>
         <div class="nav-links">
             <a href="{{ url_for('admin_dashboard') }}" class="welcome-text">Inventory</a>
             <a href="{{ url_for('admin_orders') }}" class="welcome-text">Orders</a>
