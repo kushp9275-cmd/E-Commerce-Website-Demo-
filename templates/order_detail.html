@@ -12,8 +12,11 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{% if session.get('role') == 'Admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('dashboard') }}{% endif %}" style="color: inherit; text-decoration: none;">
-                NeoCart
+            <a href="{% if session.get('role') == 'Admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('dashboard') }}{% endif %}" class="navbar-logo-link">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NeoCart Logo" class="navbar-logo" />
+                {% if session.get('role') == 'Admin' %}
+                <span class="admin-badge">Admin</span>
+                {% endif %}
             </a>
         </div>
         <div class="nav-links">
