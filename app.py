@@ -272,6 +272,12 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
+@app.errorhandler(500)
+def handle_500_error(e):
+    import traceback
+    return f"<h1>Internal Server Error (500)</h1><pre>{traceback.format_exc()}</pre>", 500
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # DASHBOARD & SEARCH
 # ─────────────────────────────────────────────────────────────────────────────
