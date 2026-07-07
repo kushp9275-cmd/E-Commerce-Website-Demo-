@@ -4,3 +4,4 @@ razorpay
 python-dotenv
 google-generativeai
 gunicorn
+twilio
