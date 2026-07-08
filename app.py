@@ -319,6 +319,27 @@ def debug_db():
         import traceback
         return f"<pre>{traceback.format_exc()}</pre>"
 
+@app.route('/debug-register')
+def debug_register():
+    try:
+        with app.test_request_context('/register', method='POST', data={
+            'username': 'debuguser',
+            'email': 'debuguser@example.com',
+            'password': 'password123',
+            'mobile_no': '1234567890',
+            'address': '123 Test St',
+            'role': 'User'
+        }):
+            res = register()
+            if hasattr(res, 'headers'):
+                return f"Success! Redirected to: {res.headers.get('Location')} (Status: {res.status_code})"
+            else:
+                return f"Result: {res}"
+    except Exception as e:
+        import traceback
+        return f"<h1>Debug Register Crash</h1><pre>{traceback.format_exc()}</pre>"
+
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
