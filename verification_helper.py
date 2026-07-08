@@ -25,6 +25,68 @@ The NeoCart Team
 Your Future, Delivered.
 """
     
+    resend_api_key = os.getenv('RESEND_API_KEY')
+    if resend_api_key:
+        import json
+        import urllib.request
+        import urllib.error
+        
+        url = "https://api.resend.com/emails"
+        headers = {
+            "Authorization": f"Bearer {resend_api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
+        
+        html_body = f"""
+        <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1e293b;">
+            <div style="text-align: center; margin-bottom: 25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px;">
+                <h2 style="color: #6366F1; margin: 0; font-size: 1.5rem; font-weight: 700;">Welcome to NeoCart</h2>
+                <p style="color: #64748b; font-size: 0.9rem; margin: 4px 0 0 0;">Your Future, Delivered.</p>
+            </div>
+            <p style="font-size: 1rem; line-height: 1.6;">Hello <strong>{username}</strong>,</p>
+            <p style="font-size: 1rem; line-height: 1.6; color: #334155;">Thank you for registering at NeoCart! To complete your registration and verify your account, please use the 6-digit confirmation code below:</p>
+            
+            <div style="text-align: center; margin: 30px 0; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); padding: 20px; border-radius: 8px; border: 1px dashed #a78bfa;">
+                <span style="font-size: 2rem; font-weight: 800; letter-spacing: 0.15em; color: #4f46e5;">{code}</span>
+            </div>
+            
+            <p style="font-size: 0.85rem; line-height: 1.5; color: #64748b;">If you did not request this registration, you can safely ignore this email.</p>
+            <div style="border-top: 1px solid #f1f5f9; margin-top: 25px; padding-top: 20px; text-align: center; font-size: 0.8rem; color: #94a3b8;">
+                <p style="margin: 0;">NeoCart Inc. &bull; Innovative E-Commerce Solution</p>
+            </div>
+        </div>
+        """
+        
+        data = {
+            "from": "onboarding@resend.dev",
+            "to": [to_email],
+            "subject": subject,
+            "html": html_body
+        }
+        
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(data).encode('utf-8'),
+            headers=headers,
+            method='POST'
+        )
+        
+        try:
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res_body = response.read().decode('utf-8')
+                print(f"Resend email sent successfully: {res_body}")
+                return True
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode('utf-8')
+            print(f"Resend HTTP Error {he.code}: {err_body}")
+            print(f"\n[FALLBACK] Email content: To: {to_email} | Subject: {subject} | Code: {code}\n")
+            return True
+        except Exception as e:
+            print(f"Resend error: {e}")
+            print(f"\n[FALLBACK] Email content: To: {to_email} | Subject: {subject} | Code: {code}\n")
+            return True
+
     smtp_host = os.getenv('SMTP_HOST')
     smtp_port = os.getenv('SMTP_PORT', '587')
     smtp_user = os.getenv('SMTP_USER')
