@@ -100,108 +100,94 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
-    try:
-        username = request.form.get('username', '').strip()
-        email = request.form.get('email', '').strip()
-        password = request.form.get('password', '').strip()
-        mobile_no = request.form.get('mobile_no', '').strip()
-        address = request.form.get('address', '').strip()
-        role = request.form.get('role', 'User').strip()
-        
-        if not username or not email or not password or not mobile_no or not address:
-            flash("All fields are required.", "error")
-            return redirect(url_for('home'))
+    username = request.form.get('username', '').strip()
+    email = request.form.get('email', '').strip()
+    password = request.form.get('password', '').strip()
+    mobile_no = request.form.get('mobile_no', '').strip()
+    address = request.form.get('address', '').strip()
+    role = request.form.get('role', 'User').strip()
+    
+    if not username or not email or not password or not mobile_no or not address:
+        flash("All fields are required.", "error")
+        return redirect(url_for('home'))
 
-        # Check if email is already registered
-        conn = get_db_connection()
-        if not conn:
-            return "DATABASE CONNECTION FAILED (conn is None)"
-        cursor = conn.cursor()
-        cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
-        existing_user = cursor.fetchone()
-        cursor.close()
-        conn.close()
+    # Check if email is already registered
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+    existing_user = cursor.fetchone()
+    cursor.close()
+    conn.close()
 
-        if existing_user:
-            flash("Email already registered.", "error")
-            return redirect(url_for('home'))
+    if existing_user:
+        flash("Email already registered.", "error")
+        return redirect(url_for('home'))
 
-        # Generate registration verification code
-        from verification_helper import generate_code, send_confirmation_email
-        code = generate_code()
-        
-        # Save temporary data in session
-        session['temp_registration'] = {
-            'username': username,
-            'email': email,
-            'password': password,
-            'mobile_no': mobile_no,
-            'address': address,
-            'role': role,
-            'code': code
-        }
+    # Generate registration verification code
+    from verification_helper import generate_code, send_confirmation_email
+    code = generate_code()
+    
+    # Save temporary data in session
+    session['temp_registration'] = {
+        'username': username,
+        'email': email,
+        'password': password,
+        'mobile_no': mobile_no,
+        'address': address,
+        'role': role,
+        'code': code
+    }
 
-        # Send verification email
-        sent = send_confirmation_email(email, username, code)
-        if not sent:
-            flash("Failed to send verification email. Please try again.", "error")
-            return redirect(url_for('home'))
+    # Send verification email
+    sent = send_confirmation_email(email, username, code)
+    if not sent:
+        flash("Failed to send verification email. Please try again.", "error")
+        return redirect(url_for('home'))
 
-        return redirect(url_for('verify_registration'))
-    except Exception as e:
-        import traceback
-        return f"<h1>Crash in register()</h1><pre>{traceback.format_exc()}</pre>", 200
-
+    return redirect(url_for('verify_registration'))
 
 @app.route('/verify-registration', methods=['GET', 'POST'])
 def verify_registration():
-    try:
-        temp_reg = session.get('temp_registration')
-        if not temp_reg:
-            flash("No active registration found. Please register first.", "error")
+    temp_reg = session.get('temp_registration')
+    if not temp_reg:
+        flash("No active registration found. Please register first.", "error")
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        user_code = request.form.get('verification_code', '').strip()
+        if user_code != temp_reg['code']:
+            flash("Invalid registration code. Please try again.", "error")
+            return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
+
+        # If Admin, verify the admin security code
+        if temp_reg['role'] == 'Admin':
+            admin_code = request.form.get('admin_security_code', '').strip()
+            required_admin_code = os.getenv('ADMIN_SECURITY_CODE', 'ADMIN123')
+            if admin_code != required_admin_code:
+                flash("Invalid Admin Security Code.", "error")
+                return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=True)
+
+        # Create account in database
+        hashed_password = generate_password_hash(temp_reg['password'])
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO users (username, email, password_hash, mobile_no, address, role) VALUES (?, ?, ?, ?, ?, ?)",
+                (temp_reg['username'], temp_reg['email'], hashed_password, temp_reg['mobile_no'], temp_reg['address'], temp_reg['role'])
+            )
+            conn.commit()
+            flash("Account verified and created successfully! Please log in.", "success")
+            session.pop('temp_registration', None)
             return redirect(url_for('home'))
+        except sqlite3.IntegrityError:
+            flash("Email already registered during verification.", "error")
+            return redirect(url_for('home'))
+        finally:
+            cursor.close()
+            conn.close()
 
-        if request.method == 'POST':
-            user_code = request.form.get('verification_code', '').strip()
-            if user_code != temp_reg['code']:
-                flash("Invalid registration code. Please try again.", "error")
-                return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
-
-            # If Admin, verify the admin security code
-            if temp_reg['role'] == 'Admin':
-                admin_code = request.form.get('admin_security_code', '').strip()
-                required_admin_code = os.getenv('ADMIN_SECURITY_CODE', 'ADMIN123')
-                if admin_code != required_admin_code:
-                    flash("Invalid Admin Security Code.", "error")
-                    return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=True)
-
-            # Create account in database
-            hashed_password = generate_password_hash(temp_reg['password'])
-            conn = get_db_connection()
-            if not conn:
-                return "DATABASE CONNECTION FAILED during verification"
-            cursor = conn.cursor()
-            try:
-                cursor.execute(
-                    "INSERT INTO users (username, email, password_hash, mobile_no, address, role) VALUES (?, ?, ?, ?, ?, ?)",
-                    (temp_reg['username'], temp_reg['email'], hashed_password, temp_reg['mobile_no'], temp_reg['address'], temp_reg['role'])
-                )
-                conn.commit()
-                flash("Account verified and created successfully! Please log in.", "success")
-                session.pop('temp_registration', None)
-                return redirect(url_for('home'))
-            except sqlite3.IntegrityError:
-                flash("Email already registered during verification.", "error")
-                return redirect(url_for('home'))
-            finally:
-                cursor.close()
-                conn.close()
-
-        return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
-    except Exception as e:
-        import traceback
-        return f"<h1>Crash in verify_registration()</h1><pre>{traceback.format_exc()}</pre>", 200
-
+    return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
@@ -285,62 +271,6 @@ def reset_password():
 def logout():
     session.clear()
     return redirect(url_for('home'))
-
-@app.errorhandler(500)
-def handle_500_error(e):
-    import traceback
-    return f"<h1>Internal Server Error (500)</h1><pre>{traceback.format_exc()}</pre>", 500
-
-@app.route('/debug-db')
-def debug_db():
-    try:
-        import sqlite3
-        import os
-        db_path = os.path.join(app.root_path, 'mart.db')
-        res = f"db_path: {db_path}<br>"
-        res += f"exists: {os.path.exists(db_path)}<br>"
-        if os.path.exists(db_path):
-            res += f"size: {os.path.getsize(db_path)} bytes<br>"
-            res += f"permissions: {oct(os.stat(db_path).st_mode)}<br>"
-        
-        conn = get_db_connection()
-        if conn is None:
-            res += "conn is None!<br>"
-        else:
-            res += "conn is OK!<br>"
-            cursor = conn.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-            tables = [row[0] for row in cursor.fetchall()]
-            res += f"tables: {tables}<br>"
-            cursor.close()
-            conn.close()
-        return res
-    except Exception as e:
-        import traceback
-        return f"<pre>{traceback.format_exc()}</pre>"
-
-@app.route('/debug-register')
-def debug_register():
-    try:
-        with app.test_request_context('/register', method='POST', data={
-            'username': 'debuguser',
-            'email': 'debuguser@example.com',
-            'password': 'password123',
-            'mobile_no': '1234567890',
-            'address': '123 Test St',
-            'role': 'User'
-        }):
-            res = register()
-            if hasattr(res, 'headers'):
-                return f"Success! Redirected to: {res.headers.get('Location')} (Status: {res.status_code})"
-            else:
-                return f"Result: {res}"
-    except Exception as e:
-        import traceback
-        return f"<h1>Debug Register Crash</h1><pre>{traceback.format_exc()}</pre>"
-
-
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DASHBOARD & SEARCH

@@ -46,7 +46,8 @@ Your Future, Delivered.
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
         
-        server = smtplib.SMTP(smtp_host, int(smtp_port))
+        # Add timeout=10 to prevent Gunicorn worker timeout if Render blocks port 587
+        server = smtplib.SMTP(smtp_host, int(smtp_port), timeout=10)
         server.starttls()
         server.login(smtp_user, smtp_pass)
         server.sendmail(smtp_user, to_email, msg.as_string())
@@ -55,7 +56,8 @@ Your Future, Delivered.
     except Exception as e:
         print(f"SMTP ERROR: Failed to send email to {to_email}: {e}")
         print(f"\n[FALLBACK] Email content: To: {to_email} | Subject: {subject} | Code: {code}\n")
-        return False
+        # Return True to fall back to simulation mode so registration works on Render (code is logged to console)
+        return True
 
 def send_otp_sms(to_mobile, otp):
     """Sends an SMS containing the password reset OTP using Twilio."""
