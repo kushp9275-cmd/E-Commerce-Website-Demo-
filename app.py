@@ -155,46 +155,53 @@ def register():
 
 @app.route('/verify-registration', methods=['GET', 'POST'])
 def verify_registration():
-    temp_reg = session.get('temp_registration')
-    if not temp_reg:
-        flash("No active registration found. Please register first.", "error")
-        return redirect(url_for('home'))
-
-    if request.method == 'POST':
-        user_code = request.form.get('verification_code', '').strip()
-        if user_code != temp_reg['code']:
-            flash("Invalid registration code. Please try again.", "error")
-            return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
-
-        # If Admin, verify the admin security code
-        if temp_reg['role'] == 'Admin':
-            admin_code = request.form.get('admin_security_code', '').strip()
-            required_admin_code = os.getenv('ADMIN_SECURITY_CODE', 'ADMIN123')
-            if admin_code != required_admin_code:
-                flash("Invalid Admin Security Code.", "error")
-                return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=True)
-
-        # Create account in database
-        hashed_password = generate_password_hash(temp_reg['password'])
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute(
-                "INSERT INTO users (username, email, password_hash, mobile_no, address, role) VALUES (?, ?, ?, ?, ?, ?)",
-                (temp_reg['username'], temp_reg['email'], hashed_password, temp_reg['mobile_no'], temp_reg['address'], temp_reg['role'])
-            )
-            conn.commit()
-            flash("Account verified and created successfully! Please log in.", "success")
-            session.pop('temp_registration', None)
+    try:
+        temp_reg = session.get('temp_registration')
+        if not temp_reg:
+            flash("No active registration found. Please register first.", "error")
             return redirect(url_for('home'))
-        except sqlite3.IntegrityError:
-            flash("Email already registered during verification.", "error")
-            return redirect(url_for('home'))
-        finally:
-            cursor.close()
-            conn.close()
 
-    return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
+        if request.method == 'POST':
+            user_code = request.form.get('verification_code', '').strip()
+            if user_code != temp_reg['code']:
+                flash("Invalid registration code. Please try again.", "error")
+                return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
+
+            # If Admin, verify the admin security code
+            if temp_reg['role'] == 'Admin':
+                admin_code = request.form.get('admin_security_code', '').strip()
+                required_admin_code = os.getenv('ADMIN_SECURITY_CODE', 'ADMIN123')
+                if admin_code != required_admin_code:
+                    flash("Invalid Admin Security Code.", "error")
+                    return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=True)
+
+            # Create account in database
+            hashed_password = generate_password_hash(temp_reg['password'])
+            conn = get_db_connection()
+            if not conn:
+                return "DATABASE CONNECTION FAILED during verification"
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    "INSERT INTO users (username, email, password_hash, mobile_no, address, role) VALUES (?, ?, ?, ?, ?, ?)",
+                    (temp_reg['username'], temp_reg['email'], hashed_password, temp_reg['mobile_no'], temp_reg['address'], temp_reg['role'])
+                )
+                conn.commit()
+                flash("Account verified and created successfully! Please log in.", "success")
+                session.pop('temp_registration', None)
+                return redirect(url_for('home'))
+            except sqlite3.IntegrityError:
+                flash("Email already registered during verification.", "error")
+                return redirect(url_for('home'))
+            finally:
+                cursor.close()
+                conn.close()
+
+        return render_template('verify_registration.html', temp_email=temp_reg['email'], is_admin=(temp_reg['role'] == 'Admin'))
+    except Exception as e:
+        import traceback
+        return f"<h1>Crash in verify_registration()</h1><pre>{traceback.format_exc()}</pre>", 200
+
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
