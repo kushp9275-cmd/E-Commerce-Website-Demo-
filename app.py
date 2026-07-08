@@ -100,51 +100,58 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
-    username = request.form.get('username', '').strip()
-    email = request.form.get('email', '').strip()
-    password = request.form.get('password', '').strip()
-    mobile_no = request.form.get('mobile_no', '').strip()
-    address = request.form.get('address', '').strip()
-    role = request.form.get('role', 'User').strip()
-    
-    if not username or not email or not password or not mobile_no or not address:
-        flash("All fields are required.", "error")
-        return redirect(url_for('home'))
+    try:
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        mobile_no = request.form.get('mobile_no', '').strip()
+        address = request.form.get('address', '').strip()
+        role = request.form.get('role', 'User').strip()
+        
+        if not username or not email or not password or not mobile_no or not address:
+            flash("All fields are required.", "error")
+            return redirect(url_for('home'))
 
-    # Check if email is already registered
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
-    existing_user = cursor.fetchone()
-    cursor.close()
-    conn.close()
+        # Check if email is already registered
+        conn = get_db_connection()
+        if not conn:
+            return "DATABASE CONNECTION FAILED (conn is None)"
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+        existing_user = cursor.fetchone()
+        cursor.close()
+        conn.close()
 
-    if existing_user:
-        flash("Email already registered.", "error")
-        return redirect(url_for('home'))
+        if existing_user:
+            flash("Email already registered.", "error")
+            return redirect(url_for('home'))
 
-    # Generate registration verification code
-    from verification_helper import generate_code, send_confirmation_email
-    code = generate_code()
-    
-    # Save temporary data in session
-    session['temp_registration'] = {
-        'username': username,
-        'email': email,
-        'password': password,
-        'mobile_no': mobile_no,
-        'address': address,
-        'role': role,
-        'code': code
-    }
+        # Generate registration verification code
+        from verification_helper import generate_code, send_confirmation_email
+        code = generate_code()
+        
+        # Save temporary data in session
+        session['temp_registration'] = {
+            'username': username,
+            'email': email,
+            'password': password,
+            'mobile_no': mobile_no,
+            'address': address,
+            'role': role,
+            'code': code
+        }
 
-    # Send verification email
-    sent = send_confirmation_email(email, username, code)
-    if not sent:
-        flash("Failed to send verification email. Please try again.", "error")
-        return redirect(url_for('home'))
+        # Send verification email
+        sent = send_confirmation_email(email, username, code)
+        if not sent:
+            flash("Failed to send verification email. Please try again.", "error")
+            return redirect(url_for('home'))
 
-    return redirect(url_for('verify_registration'))
+        return redirect(url_for('verify_registration'))
+    except Exception as e:
+        import traceback
+        return f"<h1>Crash in register()</h1><pre>{traceback.format_exc()}</pre>", 200
+
 
 @app.route('/verify-registration', methods=['GET', 'POST'])
 def verify_registration():
