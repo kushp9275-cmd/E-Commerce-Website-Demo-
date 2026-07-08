@@ -210,14 +210,17 @@ def forgot_password():
         conn.close()
         
         if user:
-            from verification_helper import generate_code, send_otp_sms
+            from verification_helper import generate_code, send_otp_sms, send_reset_email
             otp = generate_code()
             session['reset_email'] = user['email']
             session['reset_otp'] = otp
             
             # Send SMS OTP
             send_otp_sms(user['mobile_no'], otp)
-            flash("OTP has been sent to your registered mobile number.", "success")
+            # Send Email OTP via Resend
+            send_reset_email(user['email'], user['username'], otp)
+            
+            flash("OTP has been sent to your registered mobile number and email.", "success")
             return redirect(url_for('reset_password'))
         else:
             flash("Account details do not match any registered user.", "error")
