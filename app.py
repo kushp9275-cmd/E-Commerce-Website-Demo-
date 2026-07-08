@@ -284,6 +284,35 @@ def handle_500_error(e):
     import traceback
     return f"<h1>Internal Server Error (500)</h1><pre>{traceback.format_exc()}</pre>", 500
 
+@app.route('/debug-db')
+def debug_db():
+    try:
+        import sqlite3
+        import os
+        db_path = os.path.join(app.root_path, 'mart.db')
+        res = f"db_path: {db_path}<br>"
+        res += f"exists: {os.path.exists(db_path)}<br>"
+        if os.path.exists(db_path):
+            res += f"size: {os.path.getsize(db_path)} bytes<br>"
+            res += f"permissions: {oct(os.stat(db_path).st_mode)}<br>"
+        
+        conn = get_db_connection()
+        if conn is None:
+            res += "conn is None!<br>"
+        else:
+            res += "conn is OK!<br>"
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            tables = [row[0] for row in cursor.fetchall()]
+            res += f"tables: {tables}<br>"
+            cursor.close()
+            conn.close()
+        return res
+    except Exception as e:
+        import traceback
+        return f"<pre>{traceback.format_exc()}</pre>"
+
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DASHBOARD & SEARCH
